@@ -1,4 +1,4 @@
-package dev.jasonlessenich;
+package dev.jasonlessenich.jlogic;
 
 public class Main {
     public static void main(String[] args) {
