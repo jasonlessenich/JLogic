@@ -1,6 +1,10 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
+
+mainClassName = 'dev.jasonlessenich.jlogic.JLogicApplication'
 
 group = 'dev.jasonlessenich'
 version = '1.0-SNAPSHOT'
@@ -12,6 +16,13 @@ repositories {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+}
+
+javafx {
+    version = "11"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
 test {

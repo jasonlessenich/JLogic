@@ -1,0 +1,9 @@
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane
+        xmlns:fx="http://javafx.com/fxml"
+        xmlns="http://javafx.com/javafx"
+        style="-fx-padding: 5"
+        fx:id="mainStackPane"
+        fx:controller="dev.jasonlessenich.jlogic.controller.MainViewController"
+>
+</AnchorPane>
