@@ -1,11 +1,11 @@
 package dev.jasonlessenich.jlogic.controller;
 
-import dev.jasonlessenich.jlogic.model.ConnectableNode;
-import dev.jasonlessenich.jlogic.model.DraggableNode;
-import dev.jasonlessenich.jlogic.model.gates.AndGateNode;
-import dev.jasonlessenich.jlogic.model.gates.NotGateNode;
-import dev.jasonlessenich.jlogic.model.io.InputNode;
-import dev.jasonlessenich.jlogic.model.io.OutputNode;
+import dev.jasonlessenich.jlogic.nodes.ConnectableNode;
+import dev.jasonlessenich.jlogic.nodes.DraggableNode;
+import dev.jasonlessenich.jlogic.nodes.gates.AndGateNode;
+import dev.jasonlessenich.jlogic.nodes.gates.NotGateNode;
+import dev.jasonlessenich.jlogic.nodes.io.InputNode;
+import dev.jasonlessenich.jlogic.nodes.io.OutputNode;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.fxml.FXML;
@@ -32,18 +32,18 @@ public class MainViewController {
 
 	@FXML
 	private void initialize() {
-		final ContextMenu contextMenu = buildContextMenu();
+		final ContextMenu contextMenu = buildPaneContextMenu();
 		mainStackPane.setOnMouseClicked(mouseEvent -> {
+			contextMenu.hide();
+			if (mouseEvent.getTarget().getClass() != AnchorPane.class) return;
 			if (mouseEvent.getButton() == MouseButton.SECONDARY) {
 				lastContextMenuPoint = Point.of(mouseEvent.getX(), mouseEvent.getY()).stepped(Constants.NODE_SIZE);
 				contextMenu.show(mainStackPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-			} else {
-				contextMenu.hide();
 			}
 		});
 	}
 
-	private @Nonnull ContextMenu buildContextMenu() {
+	private @Nonnull ContextMenu buildPaneContextMenu() {
 		final CheckMenuItem connectMode = new CheckMenuItem("Connect Mode");
 		connectMode.setSelected(ConnectableNode.connectMode);
 		connectMode.setOnAction(actionEvent -> ConnectableNode.connectMode = connectMode.isSelected());

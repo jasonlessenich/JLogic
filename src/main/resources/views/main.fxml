@@ -4,6 +4,5 @@
         xmlns="http://javafx.com/javafx"
         style="-fx-padding: 5"
         fx:id="mainStackPane"
-        fx:controller="dev.jasonlessenich.jlogic.controller.MainViewController"
->
+        fx:controller="dev.jasonlessenich.jlogic.controller.MainViewController">
 </AnchorPane>

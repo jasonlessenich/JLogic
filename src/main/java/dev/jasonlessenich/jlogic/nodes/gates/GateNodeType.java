@@ -1,4 +1,4 @@
-package dev.jasonlessenich.jlogic.model.gates;
+package dev.jasonlessenich.jlogic.nodes.gates;
 
 public enum GateNodeType {
 	AND("&"),

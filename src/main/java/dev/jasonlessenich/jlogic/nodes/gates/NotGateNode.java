@@ -1,4 +1,4 @@
-package dev.jasonlessenich.jlogic.model.gates;
+package dev.jasonlessenich.jlogic.nodes.gates;
 
 import dev.jasonlessenich.jlogic.utils.Point;
 

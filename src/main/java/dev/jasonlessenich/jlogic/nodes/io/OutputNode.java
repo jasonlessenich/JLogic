@@ -1,4 +1,4 @@
-package dev.jasonlessenich.jlogic.model.io;
+package dev.jasonlessenich.jlogic.nodes.io;
 
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.paint.Color;
