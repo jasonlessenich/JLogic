@@ -1,51 +1,73 @@
 package dev.jasonlessenich.jlogic.controller;
 
+import dev.jasonlessenich.jlogic.model.ConnectableNode;
+import dev.jasonlessenich.jlogic.model.DraggableNode;
+import dev.jasonlessenich.jlogic.model.gates.AndGateNode;
+import dev.jasonlessenich.jlogic.model.gates.NotGateNode;
+import dev.jasonlessenich.jlogic.model.io.InputNode;
+import dev.jasonlessenich.jlogic.model.io.OutputNode;
+import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
-import dev.jasonlessenich.jlogic.utils.PointUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import javafx.scene.layout.AnchorPane;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class MainViewController {
 	@FXML
-	private Pane mainStackPane;
+	private AnchorPane mainStackPane;
 
-	private Point dragDelta = new Point();
-	private Circle selectedCircle;
+	private Point lastContextMenuPoint = new Point();
 
-	private Map<Point, Circle> nodes = new HashMap<>();
+	public static final Map<Point, DraggableNode> NODES = new HashMap<>();
 
 	@FXML
 	private void initialize() {
-		mainStackPane.setOnMouseReleased(e -> {
-			final Point point = Point.of(e.getX(), e.getY()).stepped();
-			drawNode(point);
+		final ContextMenu contextMenu = buildContextMenu();
+		mainStackPane.setOnMouseClicked(mouseEvent -> {
+			if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+				lastContextMenuPoint = Point.of(mouseEvent.getX(), mouseEvent.getY()).stepped(Constants.NODE_SIZE);
+				contextMenu.show(mainStackPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+			} else {
+				contextMenu.hide();
+			}
 		});
 	}
 
-	private void drawNode(@Nonnull Point point) {
-		if (selectedCircle != null) {
-			selectedCircle = null;
-			return;
-		}
-		final Circle circle = new Circle(point.x, point.y, 20, Color.RED);
-		circle.setOnMousePressed(mouseEvent -> {
-			dragDelta.x = circle.getCenterX() - mouseEvent.getX();
-			dragDelta.y = circle.getCenterY() - mouseEvent.getY();
-			selectedCircle = circle;
-		});
-		circle.setOnMouseDragged(mouseEvent -> {
-			circle.setCenterX(PointUtils.step(mouseEvent.getX() + dragDelta.x));
-			circle.setCenterY(PointUtils.step((mouseEvent.getY() + dragDelta.y)));
-			dragDelta = new Point();
-		});
-		nodes.put(point, circle);
-		mainStackPane.getChildren().addAll(circle);
+	private @Nonnull ContextMenu buildContextMenu() {
+		final CheckMenuItem connectMode = new CheckMenuItem("Connect Mode");
+		connectMode.setSelected(ConnectableNode.connectMode);
+		connectMode.setOnAction(actionEvent -> ConnectableNode.connectMode = connectMode.isSelected());
+		final CheckMenuItem alignMode = new CheckMenuItem("Align Mode");
+		alignMode.setSelected(DraggableNode.alignToGrid);
+		alignMode.setOnAction(actionEvent -> DraggableNode.alignToGrid = alignMode.isSelected());
+		final MenuItem addInput = new MenuItem("Add Input");
+		addInput.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, InputNode::new));
+		final MenuItem addOutput = new MenuItem("Add Output");
+		addOutput.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, OutputNode::new));
+		final Menu addGate = new Menu("Add Default Gate...");
+		final MenuItem addAndGate = new MenuItem("AND (&)");
+		addAndGate.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, AndGateNode::new));
+		final MenuItem addNotGate = new MenuItem("NOT (-1)");
+		addNotGate.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, NotGateNode::new));
+		addGate.getItems().addAll(addAndGate, addNotGate);
+		final ContextMenu contextMenu = new ContextMenu();
+		contextMenu.getItems().addAll(connectMode, alignMode, new SeparatorMenuItem(), addInput, addOutput, new SeparatorMenuItem(), addGate);
+		return contextMenu;
+	}
+
+	private void drawDraggableNode(@Nonnull Point point, @Nonnull Function<Point, DraggableNode> nodeFunction) {
+		final DraggableNode node = nodeFunction.apply(point);
+		NODES.put(point, node);
+		mainStackPane.getChildren().add(node);
 	}
 }

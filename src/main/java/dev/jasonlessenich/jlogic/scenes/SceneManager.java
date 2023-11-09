@@ -17,6 +17,10 @@ public class SceneManager {
 		this.primaryStage = primaryStage;
 	}
 
+	public Stage getPrimaryStage() {
+		return primaryStage;
+	}
+
 	public void addScene(SceneType name, Scene pane) {
 		sceneMap.put(name, pane);
 	}

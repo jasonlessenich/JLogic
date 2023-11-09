@@ -10,4 +10,9 @@ public class Constants {
 	 * The windows' (stages') height.
 	 */
 	public static final int STAGE_HEIGHT = 500;
+
+	/**
+	 * All nodes' size.
+	 */
+	public static final int NODE_SIZE = 40;
 }

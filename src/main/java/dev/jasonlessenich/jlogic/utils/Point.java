@@ -1,7 +1,9 @@
 package dev.jasonlessenich.jlogic.utils;
 
+import javax.annotation.Nonnull;
+
 public class Point {
-	public double x, y;
+	private double x, y;
 
 	public Point() {}
 
@@ -10,11 +12,27 @@ public class Point {
 		this.y = y;
 	}
 
-	public static Point of(double x, double y) {
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	public void setY(double y) {
+		this.y = y;
+	}
+
+	public double getX() {
+		return x;
+	}
+
+	public double getY() {
+		return y;
+	}
+
+	public static @Nonnull Point of(double x, double y) {
 		return new Point(x, y);
 	}
 
-	public Point stepped() {
-		return new Point(PointUtils.step(x), PointUtils.step((y)));
+	public @Nonnull Point stepped(int step) {
+		return new Point(PointUtils.step(x, step), PointUtils.step(y, step));
 	}
 }
