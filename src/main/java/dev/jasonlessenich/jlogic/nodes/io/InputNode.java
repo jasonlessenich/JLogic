@@ -1,6 +1,7 @@
 package dev.jasonlessenich.jlogic.nodes.io;
 
 import dev.jasonlessenich.jlogic.controller.MainViewController;
+import dev.jasonlessenich.jlogic.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.nodes.IONode;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.event.EventHandler;
@@ -16,13 +17,14 @@ public class InputNode extends IONode {
 		super(point, circle -> {
 			circle.setStroke(Color.BLACK);
 			circle.setStrokeWidth(2);
-		}, 0, 1);
+		}, 0, 9999);
 		this.contextMenu = buildContextMenu();
 		final EventHandler<? super MouseEvent> onMousePressed = getOnMousePressed();
 		setOnMousePressed(me -> {
 			onMousePressed.handle(me);
 			if (MainViewController.simulationMode && me.isPrimaryButtonDown()) {
 				toggleActivated();
+				ConnectableNode.evaluateConnections();
 			}
 		});
 	}

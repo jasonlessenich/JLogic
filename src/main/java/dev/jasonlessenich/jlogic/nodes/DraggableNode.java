@@ -12,7 +12,6 @@ import javafx.scene.layout.StackPane;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public abstract class DraggableNode extends StackPane {
 	public static boolean alignToGrid = false;
@@ -83,14 +82,14 @@ public abstract class DraggableNode extends StackPane {
 			pane.getChildren().remove(this); // remove from pane
 			// delete all connections
 			for (DraggableNode node : MainViewController.NODES.values()) {
-				if (node instanceof ConnectableNode) {
-					final ConnectableNode connectableNode = (ConnectableNode) node;
+				if (node instanceof ConnectableNode connectableNode) {
 					connectableNode.connections.removeIf(c -> c.getConnectionFrom() == this || c.getConnectionTo() == this);
 				}
 			}
 			// redraw all connections
 			MainViewController.NODES.remove(position);
 			ConnectableNode.redrawConnections(pane);
+			ConnectableNode.evaluateConnections();
 		});
 		return deleteNode;
 	}

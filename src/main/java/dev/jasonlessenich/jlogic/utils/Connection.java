@@ -1,11 +1,11 @@
 package dev.jasonlessenich.jlogic.utils;
 
 import dev.jasonlessenich.jlogic.nodes.ConnectableNode;
-import lombok.Getter;
+import lombok.Data;
 
 import javax.annotation.Nonnull;
 
-@Getter
+@Data
 public class Connection {
 	private final ConnectableNode connectionFrom;
 	private final ConnectableNode connectionTo;
@@ -18,7 +18,7 @@ public class Connection {
 	}
 
 	public enum Type {
-		INPUT, OUTPUT
+		BACKWARD, FORWARD
 	}
 }
 
