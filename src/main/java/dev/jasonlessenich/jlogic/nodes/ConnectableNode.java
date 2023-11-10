@@ -91,7 +91,7 @@ public abstract class ConnectableNode extends DraggableNode {
 	}
 
 	public boolean canConnectTo(@Nonnull ConnectableNode node) {
-		return connections.stream().filter(c -> c.getConnectionType() == Connection.Type.FORWARD).count() < outputCount &&
+		return ((connections.stream().filter(c -> c.getConnectionType() == Connection.Type.FORWARD).count() < outputCount) || outputCount == -1) &&
 				((node.connections.stream().filter(c -> c.getConnectionType() == Connection.Type.BACKWARD).count() < node.inputCount) || node.inputCount == -1);
 	}
 

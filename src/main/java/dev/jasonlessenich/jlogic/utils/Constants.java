@@ -15,4 +15,14 @@ public class Constants {
 	 * All nodes' size.
 	 */
 	public static final int NODE_SIZE = 40;
+
+	/**
+	 * All nodes' connection size.
+	 */
+	public static final int NODE_CONNECTION_SIZE = 3;
+
+	/**
+	 * The grid's step size.
+	 */
+	public static final int GRID_STEP_SIZE = 20;
 }

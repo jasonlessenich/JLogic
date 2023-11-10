@@ -1,11 +1,13 @@
 package dev.jasonlessenich.jlogic.controller;
 
-import com.sun.tools.javac.Main;
 import dev.jasonlessenich.jlogic.JLogicApplication;
 import dev.jasonlessenich.jlogic.data.JGate;
 import dev.jasonlessenich.jlogic.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.nodes.DraggableNode;
-import dev.jasonlessenich.jlogic.nodes.GateNode;
+import dev.jasonlessenich.jlogic.nodes.gates.CustomGateNode;
+import dev.jasonlessenich.jlogic.nodes.gates.GateNode;
+import dev.jasonlessenich.jlogic.nodes.gates.concrete.AndGateNode;
+import dev.jasonlessenich.jlogic.nodes.gates.concrete.NotGateNode;
 import dev.jasonlessenich.jlogic.nodes.io.InputNode;
 import dev.jasonlessenich.jlogic.nodes.io.OutputNode;
 import dev.jasonlessenich.jlogic.utils.Constants;
@@ -41,7 +43,7 @@ public class MainViewController {
 			contextMenu.hide();
 			if (mouseEvent.getTarget().getClass() != AnchorPane.class) return;
 			if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-				lastContextMenuPoint = Point.of(mouseEvent.getX(), mouseEvent.getY()).stepped(Constants.NODE_SIZE);
+				lastContextMenuPoint = Point.of(mouseEvent.getX(), mouseEvent.getY()).stepped(Constants.GRID_STEP_SIZE);
 				contextMenu.show(mainStackPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
 			}
 		});
@@ -54,9 +56,6 @@ public class MainViewController {
 			MainViewController.simulationMode = false;
 			ConnectableNode.connectMode = connectMode.isSelected();
 		});
-		final CheckMenuItem alignMode = new CheckMenuItem("Align Mode");
-		alignMode.setSelected(DraggableNode.alignToGrid);
-		alignMode.setOnAction(actionEvent -> DraggableNode.alignToGrid = alignMode.isSelected());
 		final CheckMenuItem simulationMode = new CheckMenuItem("Simulation Mode");
 		simulationMode.setSelected(MainViewController.simulationMode);
 		simulationMode.setOnAction(actionEvent -> {
@@ -68,18 +67,23 @@ public class MainViewController {
 		final MenuItem addOutput = new MenuItem("Add Output");
 		addOutput.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, OutputNode::new));
 		final Menu addGate = new Menu("Add Gate...");
+		final MenuItem addAndGate = new MenuItem("AND Gate");
+		addAndGate.setOnAction(e -> drawDraggableNode(lastContextMenuPoint, AndGateNode::new));
+		final MenuItem addOrGate = new MenuItem("NOT Gate");
+		addOrGate.setOnAction(e -> drawDraggableNode(lastContextMenuPoint, NotGateNode::new));
+		addGate.getItems().addAll(addAndGate, addOrGate, new SeparatorMenuItem());
 		// register gates
 		for (JGate gate : JLogicApplication.getGateManager().getGates()) {
 			final Menu gateMenu = new Menu("%s (%s)".formatted(gate.getName(), gate.getSymbol()));
 			for (JGate.Table table : gate.getTableDefinition()) {
 				final MenuItem subMenu = new MenuItem("%s IN / %s OUT".formatted(table.getInputCount(), table.getOutputCount()));
-				subMenu.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, point -> new GateNode(point, gate, table)));
+				subMenu.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, point -> new CustomGateNode(point, gate, table)));
 				gateMenu.getItems().add(subMenu);
 			}
 			addGate.getItems().add(gateMenu);
 		}
 		final ContextMenu contextMenu = new ContextMenu();
-		contextMenu.getItems().addAll(connectMode, alignMode, simulationMode, new SeparatorMenuItem(), addInput, addOutput, new SeparatorMenuItem(), addGate);
+		contextMenu.getItems().addAll(connectMode, simulationMode, new SeparatorMenuItem(), addInput, addOutput, new SeparatorMenuItem(), addGate);
 		return contextMenu;
 	}
 

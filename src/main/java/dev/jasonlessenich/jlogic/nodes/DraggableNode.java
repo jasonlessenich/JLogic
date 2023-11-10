@@ -14,7 +14,7 @@ import lombok.Getter;
 import javax.annotation.Nonnull;
 
 public abstract class DraggableNode extends StackPane {
-	public static boolean alignToGrid = false;
+	public static boolean alignToGrid = true;
 
 	@Getter
 	private final Point position;
@@ -63,8 +63,8 @@ public abstract class DraggableNode extends StackPane {
 			final double layoutY = getLayoutY() + me.getY() - dragDelta.getY();
 			position.setX(getLayoutX());
 			position.setY(getLayoutY());
-			setLayoutX(alignToGrid ? PointUtils.step(layoutX, Constants.NODE_SIZE) : layoutX);
-			setLayoutY(alignToGrid ? PointUtils.step(layoutY, Constants.NODE_SIZE) : layoutY);
+			setLayoutX(alignToGrid ? PointUtils.step(layoutX, Constants.GRID_STEP_SIZE) : layoutX);
+			setLayoutY(alignToGrid ? PointUtils.step(layoutY, Constants.GRID_STEP_SIZE) : layoutY);
 		});
 	}
 

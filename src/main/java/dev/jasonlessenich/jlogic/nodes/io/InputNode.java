@@ -17,8 +17,7 @@ public class InputNode extends IONode {
 		super(point, circle -> {
 			circle.setStroke(Color.BLACK);
 			circle.setStrokeWidth(2);
-		}, 0, 9999);
-		this.contextMenu = buildContextMenu();
+		}, 0, -1);
 		final EventHandler<? super MouseEvent> onMousePressed = getOnMousePressed();
 		setOnMousePressed(me -> {
 			onMousePressed.handle(me);
@@ -27,17 +26,5 @@ public class InputNode extends IONode {
 				ConnectableNode.evaluateConnections();
 			}
 		});
-	}
-
-	private @Nonnull ContextMenu buildContextMenu() {
-		final ContextMenu contextMenu = new ContextMenu();
-		contextMenu.getItems().addAll(buildDeleteItem(), buildToggleItem());
-		return contextMenu;
-	}
-
-	private @Nonnull MenuItem buildToggleItem() {
-		final MenuItem setActivatedItem = new MenuItem("Toggle State...");
-		setActivatedItem.setOnAction(actionEvent -> toggleActivated());
-		return setActivatedItem;
 	}
 }
