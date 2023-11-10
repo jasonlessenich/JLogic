@@ -8,7 +8,7 @@ import java.util.List;
 
 public class NotGateNode extends GateNode {
 	public NotGateNode(@Nonnull Point point) {
-		super(point,1, 1, "-1");
+		super(point, 1, 1, "-1");
 	}
 
 	@Override

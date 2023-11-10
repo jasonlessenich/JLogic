@@ -2,11 +2,8 @@ package dev.jasonlessenich.jlogic.nodes.io;
 
 import dev.jasonlessenich.jlogic.controller.MainViewController;
 import dev.jasonlessenich.jlogic.nodes.ConnectableNode;
-import dev.jasonlessenich.jlogic.nodes.IONode;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.event.EventHandler;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 

@@ -22,10 +22,9 @@ import java.util.Optional;
 @Slf4j
 public abstract class ConnectableNode extends DraggableNode {
 	public static boolean connectMode = false;
-
+	protected final List<Connection> connections;
 	private final int inputCount;
 	private final int outputCount;
-	protected final List<Connection> connections;
 
 	public ConnectableNode(@Nonnull Point point, int inputCount, int outputCount) {
 		super(point);
@@ -66,14 +65,6 @@ public abstract class ConnectableNode extends DraggableNode {
 		});
 	}
 
-	public List<Connection> getSources() {
-		return connections.stream().filter(c -> c.getConnectionType() == Connection.Type.BACKWARD).toList();
-	}
-
-	public List<Connection> getTargets() {
-		return connections.stream().filter(c -> c.getConnectionType() == Connection.Type.FORWARD).toList();
-	}
-
 	public static void redrawConnections(@Nonnull Pane pane) {
 		pane.getChildren().removeIf(n -> n instanceof NodeArrow);
 		for (DraggableNode node : MainViewController.NODES.values()) {
@@ -87,22 +78,6 @@ public abstract class ConnectableNode extends DraggableNode {
 					);
 				}
 			}
-		}
-	}
-
-	public boolean canConnectTo(@Nonnull ConnectableNode node) {
-		return ((connections.stream().filter(c -> c.getConnectionType() == Connection.Type.FORWARD).count() < outputCount) || outputCount == -1) &&
-				((node.connections.stream().filter(c -> c.getConnectionType() == Connection.Type.BACKWARD).count() < node.inputCount) || node.inputCount == -1);
-	}
-
-	public void connectTo(@Nonnull ConnectableNode node) {
-		final boolean canConnect = canConnectTo(node);
-		if (canConnect) {
-			log.info("Connected " + this + " to " + node);
-			connections.add(new Connection(this, node, Connection.Type.FORWARD));
-			node.connections.add(new Connection(node, this, Connection.Type.BACKWARD));
-			drawArrowLine(this, node, (Pane) getParent());
-			evaluateConnections();
 		}
 	}
 
@@ -131,7 +106,7 @@ public abstract class ConnectableNode extends DraggableNode {
 			final ConnectableNode sourceNode = source.getConnectionTo();
 			if (sourceNode instanceof InputNode in) {
 				input.add(in.isActivated());
-			} else if (sourceNode instanceof Evaluable eval){
+			} else if (sourceNode instanceof Evaluable eval) {
 				input.add(eval.evaluate(evaluateSources(sourceNode)));
 			} else {
 				throw new IllegalStateException("Source node " + sourceNode + " is not an InputNode or Evaluable");
@@ -152,5 +127,29 @@ public abstract class ConnectableNode extends DraggableNode {
 
 	private static void drawArrowLine(double startX, double startY, double endX, double endY, @Nonnull Pane pane) {
 		pane.getChildren().add(new NodeArrow(startX, startY, endX, endY));
+	}
+
+	public List<Connection> getSources() {
+		return connections.stream().filter(c -> c.getConnectionType() == Connection.Type.BACKWARD).toList();
+	}
+
+	public List<Connection> getTargets() {
+		return connections.stream().filter(c -> c.getConnectionType() == Connection.Type.FORWARD).toList();
+	}
+
+	public boolean canConnectTo(@Nonnull ConnectableNode node) {
+		return ((connections.stream().filter(c -> c.getConnectionType() == Connection.Type.FORWARD).count() < outputCount) || outputCount == -1) &&
+				((node.connections.stream().filter(c -> c.getConnectionType() == Connection.Type.BACKWARD).count() < node.inputCount) || node.inputCount == -1);
+	}
+
+	public void connectTo(@Nonnull ConnectableNode node) {
+		final boolean canConnect = canConnectTo(node);
+		if (canConnect) {
+			log.info("Connected " + this + " to " + node);
+			connections.add(new Connection(this, node, Connection.Type.FORWARD));
+			node.connections.add(new Connection(node, this, Connection.Type.BACKWARD));
+			drawArrowLine(this, node, (Pane) getParent());
+			evaluateConnections();
+		}
 	}
 }

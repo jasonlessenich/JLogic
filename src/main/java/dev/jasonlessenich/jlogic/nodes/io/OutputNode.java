@@ -1,7 +1,6 @@
 package dev.jasonlessenich.jlogic.nodes.io;
 
 import dev.jasonlessenich.jlogic.nodes.Evaluable;
-import dev.jasonlessenich.jlogic.nodes.IONode;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.paint.Color;
 

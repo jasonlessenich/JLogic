@@ -1,16 +1,8 @@
-package dev.jasonlessenich.jlogic.nodes;
+package dev.jasonlessenich.jlogic.nodes.io;
 
-import dev.jasonlessenich.jlogic.controller.MainViewController;
 import dev.jasonlessenich.jlogic.nodes.ConnectableNode;
-import dev.jasonlessenich.jlogic.nodes.DraggableNode;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
-import javafx.event.EventHandler;
-import javafx.scene.Cursor;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import lombok.Getter;

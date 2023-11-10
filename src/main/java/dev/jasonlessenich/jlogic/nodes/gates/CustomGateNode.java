@@ -1,7 +1,7 @@
 package dev.jasonlessenich.jlogic.nodes.gates;
 
-import dev.jasonlessenich.jlogic.data.JGate;
 import dev.jasonlessenich.jlogic.nodes.Evaluable;
+import dev.jasonlessenich.jlogic.nodes.gates.loader.JGate;
 import dev.jasonlessenich.jlogic.utils.Point;
 
 import javax.annotation.Nonnull;

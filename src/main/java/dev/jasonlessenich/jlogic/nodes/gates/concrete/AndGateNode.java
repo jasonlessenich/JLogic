@@ -8,7 +8,7 @@ import java.util.List;
 
 public class AndGateNode extends GateNode {
 	public AndGateNode(@Nonnull Point point) {
-		super(point,-1, 1, "&");
+		super(point, -1, 1, "&");
 	}
 
 	@Override

@@ -1,13 +1,12 @@
 package dev.jasonlessenich.jlogic.controller;
 
 import dev.jasonlessenich.jlogic.JLogicApplication;
-import dev.jasonlessenich.jlogic.data.JGate;
 import dev.jasonlessenich.jlogic.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.nodes.DraggableNode;
 import dev.jasonlessenich.jlogic.nodes.gates.CustomGateNode;
-import dev.jasonlessenich.jlogic.nodes.gates.GateNode;
 import dev.jasonlessenich.jlogic.nodes.gates.concrete.AndGateNode;
 import dev.jasonlessenich.jlogic.nodes.gates.concrete.NotGateNode;
+import dev.jasonlessenich.jlogic.nodes.gates.loader.JGate;
 import dev.jasonlessenich.jlogic.nodes.io.InputNode;
 import dev.jasonlessenich.jlogic.nodes.io.OutputNode;
 import dev.jasonlessenich.jlogic.utils.Constants;
@@ -27,14 +26,11 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class MainViewController {
+	public static final Map<Point, DraggableNode> NODES = new HashMap<>();
 	public static boolean simulationMode = false;
-
 	@FXML
 	private AnchorPane mainStackPane;
-
 	private Point lastContextMenuPoint = new Point();
-
-	public static final Map<Point, DraggableNode> NODES = new HashMap<>();
 
 	@FXML
 	private void initialize() {
