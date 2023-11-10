@@ -1,7 +1,9 @@
 package dev.jasonlessenich.jlogic.nodes;
 
 import dev.jasonlessenich.jlogic.controller.MainViewController;
+import dev.jasonlessenich.jlogic.utils.Connection;
 import dev.jasonlessenich.jlogic.utils.Constants;
+import dev.jasonlessenich.jlogic.utils.NodeArrow;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;

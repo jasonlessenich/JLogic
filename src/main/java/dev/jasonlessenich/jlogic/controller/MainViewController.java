@@ -1,5 +1,6 @@
 package dev.jasonlessenich.jlogic.controller;
 
+import com.sun.tools.javac.Main;
 import dev.jasonlessenich.jlogic.JLogicApplication;
 import dev.jasonlessenich.jlogic.data.JGate;
 import dev.jasonlessenich.jlogic.nodes.ConnectableNode;
@@ -24,6 +25,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class MainViewController {
+	public static boolean simulationMode = false;
+
 	@FXML
 	private AnchorPane mainStackPane;
 
@@ -47,10 +50,19 @@ public class MainViewController {
 	private @Nonnull ContextMenu buildPaneContextMenu() {
 		final CheckMenuItem connectMode = new CheckMenuItem("Connect Mode");
 		connectMode.setSelected(ConnectableNode.connectMode);
-		connectMode.setOnAction(actionEvent -> ConnectableNode.connectMode = connectMode.isSelected());
+		connectMode.setOnAction(actionEvent -> {
+			MainViewController.simulationMode = false;
+			ConnectableNode.connectMode = connectMode.isSelected();
+		});
 		final CheckMenuItem alignMode = new CheckMenuItem("Align Mode");
 		alignMode.setSelected(DraggableNode.alignToGrid);
 		alignMode.setOnAction(actionEvent -> DraggableNode.alignToGrid = alignMode.isSelected());
+		final CheckMenuItem simulationMode = new CheckMenuItem("Simulation Mode");
+		simulationMode.setSelected(MainViewController.simulationMode);
+		simulationMode.setOnAction(actionEvent -> {
+			ConnectableNode.connectMode = false;
+			MainViewController.simulationMode = simulationMode.isSelected();
+		});
 		final MenuItem addInput = new MenuItem("Add Input");
 		addInput.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, InputNode::new));
 		final MenuItem addOutput = new MenuItem("Add Output");
@@ -58,14 +70,16 @@ public class MainViewController {
 		final Menu addGate = new Menu("Add Gate...");
 		// register gates
 		for (JGate gate : JLogicApplication.getGateManager().getGates()) {
+			final Menu gateMenu = new Menu("%s (%s)".formatted(gate.getName(), gate.getSymbol()));
 			for (JGate.Table table : gate.getTableDefinition()) {
-				final MenuItem item = new MenuItem("%s (%s) - %d IN / %d OUT".formatted(gate.getName(), gate.getSymbol(), table.getInputCount(), table.getOutputCount()));
-				item.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, point -> new GateNode(point, gate, table)));
-				addGate.getItems().add(item);
+				final MenuItem subMenu = new MenuItem("%s IN / %s OUT".formatted(table.getInputCount(), table.getOutputCount()));
+				subMenu.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, point -> new GateNode(point, gate, table)));
+				gateMenu.getItems().add(subMenu);
 			}
+			addGate.getItems().add(gateMenu);
 		}
 		final ContextMenu contextMenu = new ContextMenu();
-		contextMenu.getItems().addAll(connectMode, alignMode, new SeparatorMenuItem(), addInput, addOutput, new SeparatorMenuItem(), addGate);
+		contextMenu.getItems().addAll(connectMode, alignMode, simulationMode, new SeparatorMenuItem(), addInput, addOutput, new SeparatorMenuItem(), addGate);
 		return contextMenu;
 	}
 

@@ -1,7 +1,11 @@
-package dev.jasonlessenich.jlogic.nodes;
+package dev.jasonlessenich.jlogic.utils;
+
+import dev.jasonlessenich.jlogic.nodes.ConnectableNode;
+import lombok.Getter;
 
 import javax.annotation.Nonnull;
 
+@Getter
 public class Connection {
 	private final ConnectableNode connectionFrom;
 	private final ConnectableNode connectionTo;
@@ -11,18 +15,6 @@ public class Connection {
 		this.connectionFrom = connectionFrom;
 		this.connectionTo = connectionTo;
 		this.connectionType = connectionType;
-	}
-
-	public ConnectableNode getConnectionFrom() {
-		return connectionFrom;
-	}
-
-	public ConnectableNode getConnectionTo() {
-		return connectionTo;
-	}
-
-	public Type getConnectionType() {
-		return connectionType;
 	}
 
 	public enum Type {

@@ -49,7 +49,7 @@ public abstract class DraggableNode extends StackPane {
 				getScene().setCursor(Cursor.DEFAULT);
 			}
 			getScene().setCursor(Cursor.CLOSED_HAND);
-			if (ConnectableNode.connectMode) return;
+			if (ConnectableNode.connectMode || MainViewController.simulationMode) return;
 			dragDelta.setX(me.getX());
 			dragDelta.setY(me.getY());
 		});
@@ -59,7 +59,7 @@ public abstract class DraggableNode extends StackPane {
 			}
 		});
 		setOnMouseDragged(me -> {
-			if (ConnectableNode.connectMode || !me.isPrimaryButtonDown()) return;
+			if (ConnectableNode.connectMode || MainViewController.simulationMode || !me.isPrimaryButtonDown()) return;
 			final double layoutX = getLayoutX() + me.getX() - dragDelta.getX();
 			final double layoutY = getLayoutY() + me.getY() - dragDelta.getY();
 			position.setX(getLayoutX());

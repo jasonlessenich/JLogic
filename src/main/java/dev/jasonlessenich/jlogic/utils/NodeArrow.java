@@ -1,4 +1,4 @@
-package dev.jasonlessenich.jlogic.nodes;
+package dev.jasonlessenich.jlogic.utils;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;

@@ -35,4 +35,8 @@ public abstract class IONode extends ConnectableNode {
 		this.activated = activated;
 		circle.setFill(activated ? Color.LAWNGREEN : Color.ORANGERED);
 	}
+
+	public void toggleActivated() {
+		setActivated(!isActivated());
+	}
 }
