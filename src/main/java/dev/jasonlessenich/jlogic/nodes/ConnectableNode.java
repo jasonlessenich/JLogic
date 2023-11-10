@@ -4,10 +4,12 @@ import dev.jasonlessenich.jlogic.controller.MainViewController;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

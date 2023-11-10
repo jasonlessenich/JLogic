@@ -1,0 +1,16 @@
+{
+  "name": "OR",
+  "symbol": ">=1",
+  "tableDefinition": [
+    {
+      "inputCount": 2,
+      "outputCount": 1,
+      "map": {
+        "0, 0": false,
+        "0, 1": true,
+        "1, 0": true,
+        "1, 1": true
+      }
+    }
+  ]
+}

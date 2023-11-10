@@ -1,0 +1,16 @@
+{
+  "name": "AND",
+  "symbol": "&",
+  "tableDefinition": [
+    {
+      "inputCount": 2,
+      "outputCount": 1,
+      "map": {
+        "0, 0": false,
+        "0, 1": false,
+        "1, 0": false,
+        "1, 1": true
+      }
+    }
+  ]
+}

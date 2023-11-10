@@ -9,20 +9,26 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import lombok.Getter;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class DraggableNode extends StackPane {
 	public static boolean alignToGrid = false;
 
+	@Getter
 	private final Point position;
+
+	@Nonnull
+	protected ContextMenu contextMenu;
 
 	public DraggableNode(@Nonnull Point point) {
 		this.position = point;
+		this.contextMenu = buildDefaultContextMenu();
 		setLayoutX(point.getX() + getLayoutX());
 		setLayoutY(point.getY() + getLayoutY());
 		final Point dragDelta = new Point();
-		final ContextMenu contextMenu = buildContextMenu();
 		setOnMouseEntered(me -> {
 			if (!me.isPrimaryButtonDown()) {
 				getScene().setCursor(Cursor.HAND);
@@ -35,10 +41,10 @@ public abstract class DraggableNode extends StackPane {
 		});
 		setOnMousePressed(me -> {
 			if (me.isSecondaryButtonDown()) {
-				contextMenu.show(this, me.getScreenX(), me.getScreenY());
+				this.contextMenu.show(this, me.getScreenX(), me.getScreenY());
 				return;
 			}
-			contextMenu.hide();
+			this.contextMenu.hide();
 			if (me.isPrimaryButtonDown()) {
 				getScene().setCursor(Cursor.DEFAULT);
 			}
@@ -63,11 +69,13 @@ public abstract class DraggableNode extends StackPane {
 		});
 	}
 
-	public Point getPosition() {
-		return position;
+	private @Nonnull ContextMenu buildDefaultContextMenu() {
+		final ContextMenu contextMenu = new ContextMenu();
+		contextMenu.getItems().addAll(buildDeleteItem());
+		return contextMenu;
 	}
 
-	private @Nonnull ContextMenu buildContextMenu() {
+	public @Nonnull MenuItem buildDeleteItem() {
 		final MenuItem deleteNode = new MenuItem("Delete Node");
 		deleteNode.setOnAction(actionEvent -> {
 			getChildren().clear();
@@ -84,8 +92,6 @@ public abstract class DraggableNode extends StackPane {
 			MainViewController.NODES.remove(position);
 			ConnectableNode.redrawConnections(pane);
 		});
-		final ContextMenu contextMenu = new ContextMenu();
-		contextMenu.getItems().addAll(deleteNode);
-		return contextMenu;
+		return deleteNode;
 	}
 }

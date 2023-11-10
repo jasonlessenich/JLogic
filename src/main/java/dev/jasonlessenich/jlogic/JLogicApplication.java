@@ -1,28 +1,32 @@
 package dev.jasonlessenich.jlogic;
 
+import dev.jasonlessenich.jlogic.data.JGate;
+import dev.jasonlessenich.jlogic.data.JGateManager;
 import dev.jasonlessenich.jlogic.scenes.SceneManager;
 import dev.jasonlessenich.jlogic.scenes.SceneType;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import lombok.Getter;
 
 import javax.annotation.Nonnull;
+import java.nio.file.Path;
 
 public class JLogicApplication extends Application {
+    @Getter
     private static SceneManager sceneManager;
+    @Getter
+    private static JGateManager gateManager;
 
     public static void main(String[] args) {
         launch(args);
-    }
-
-    public static SceneManager getSceneManager() {
-        return sceneManager;
     }
 
     @Override
     public void start(@Nonnull Stage primaryStage) throws Exception {
         primaryStage.setTitle(Constants.APP_NAME);
         sceneManager = new SceneManager(primaryStage);
+        gateManager = new JGateManager(Path.of("gates"));
         for (SceneType type : SceneType.values()) {
             type.init();
         }

@@ -18,6 +18,17 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+    implementation("com.google.code.gson:gson:2.7")
+
+    // Logging
+    implementation("ch.qos.logback:logback-classic:1.4.11")
+
+    // Lombok Annotations
+    compileOnly("org.projectlombok:lombok:1.18.28")
+    annotationProcessor("org.projectlombok:lombok:1.18.28")
+    testCompileOnly("org.projectlombok:lombok:1.18.28")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.28")
 }
 
 javafx {

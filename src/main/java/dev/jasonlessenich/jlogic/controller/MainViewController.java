@@ -1,9 +1,10 @@
 package dev.jasonlessenich.jlogic.controller;
 
+import dev.jasonlessenich.jlogic.JLogicApplication;
+import dev.jasonlessenich.jlogic.data.JGate;
 import dev.jasonlessenich.jlogic.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.nodes.DraggableNode;
-import dev.jasonlessenich.jlogic.nodes.gates.AndGateNode;
-import dev.jasonlessenich.jlogic.nodes.gates.NotGateNode;
+import dev.jasonlessenich.jlogic.nodes.GateNode;
 import dev.jasonlessenich.jlogic.nodes.io.InputNode;
 import dev.jasonlessenich.jlogic.nodes.io.OutputNode;
 import dev.jasonlessenich.jlogic.utils.Constants;
@@ -54,12 +55,15 @@ public class MainViewController {
 		addInput.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, InputNode::new));
 		final MenuItem addOutput = new MenuItem("Add Output");
 		addOutput.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, OutputNode::new));
-		final Menu addGate = new Menu("Add Default Gate...");
-		final MenuItem addAndGate = new MenuItem("AND (&)");
-		addAndGate.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, AndGateNode::new));
-		final MenuItem addNotGate = new MenuItem("NOT (-1)");
-		addNotGate.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, NotGateNode::new));
-		addGate.getItems().addAll(addAndGate, addNotGate);
+		final Menu addGate = new Menu("Add Gate...");
+		// register gates
+		for (JGate gate : JLogicApplication.getGateManager().getGates()) {
+			for (JGate.Table table : gate.getTableDefinition()) {
+				final MenuItem item = new MenuItem("%s (%s) - %d IN / %d OUT".formatted(gate.getName(), gate.getSymbol(), table.getInputCount(), table.getOutputCount()));
+				item.setOnAction(actionEvent -> drawDraggableNode(lastContextMenuPoint, point -> new GateNode(point, gate, table)));
+				addGate.getItems().add(item);
+			}
+		}
 		final ContextMenu contextMenu = new ContextMenu();
 		contextMenu.getItems().addAll(connectMode, alignMode, new SeparatorMenuItem(), addInput, addOutput, new SeparatorMenuItem(), addGate);
 		return contextMenu;
