@@ -4,17 +4,17 @@ import dev.jasonlessenich.jlogic.controller.MainViewController;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.event.EventHandler;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 public abstract class ConnectableNode extends DraggableNode {
 	public static boolean connectMode = false;
 
@@ -86,7 +86,7 @@ public abstract class ConnectableNode extends DraggableNode {
 	public void connectTo(@Nonnull ConnectableNode node) {
 		final boolean canConnect = canConnectTo(node);
 		if (canConnect) {
-			System.out.println("Connected " + this + " to " + node);
+			log.info("Connected " + this + " to " + node);
 			connections.add(new Connection(this, node, Connection.Type.OUTPUT));
 			node.connections.add(new Connection(node, this, Connection.Type.INPUT));
 			drawArrowLine(this, node, (Pane) getParent());
@@ -97,7 +97,7 @@ public abstract class ConnectableNode extends DraggableNode {
 		drawArrowLine(
 				from.getPosition().getX() + Constants.NODE_SIZE + 2, // + 2 to avoid clipping with the circle's stroke
 				from.getPosition().getY() + ((double) Constants.NODE_SIZE / 2),
-				to.getPosition().getX(),
+				to.getPosition().getX() - 2, // - 2 to avoid clipping with the circle's stroke
 				to.getPosition().getY() + ((double) Constants.NODE_SIZE / 2),
 				pane
 		);
