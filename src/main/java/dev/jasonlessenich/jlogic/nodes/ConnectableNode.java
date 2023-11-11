@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -138,7 +139,8 @@ public abstract class ConnectableNode extends DraggableNode {
 	}
 
 	public boolean canConnectTo(@Nonnull ConnectableNode node) {
-		return ((connections.stream().filter(c -> c.getConnectionType() == Connection.Type.FORWARD).count() < outputCount) || outputCount == -1) &&
+		return connections.stream().noneMatch(c -> Objects.equals(c, new Connection(this, node, Connection.Type.FORWARD))) &&
+				((connections.stream().filter(c -> c.getConnectionType() == Connection.Type.FORWARD).count() < outputCount) || outputCount == -1) &&
 				((node.connections.stream().filter(c -> c.getConnectionType() == Connection.Type.BACKWARD).count() < node.inputCount) || node.inputCount == -1);
 	}
 

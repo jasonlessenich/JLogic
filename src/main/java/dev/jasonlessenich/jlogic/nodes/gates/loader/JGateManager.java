@@ -2,6 +2,7 @@ package dev.jasonlessenich.jlogic.nodes.gates.loader;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
@@ -13,12 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Getter
 @Slf4j
 public class JGateManager {
 	private final List<JGate> gates;
 
 	public JGateManager(@Nonnull Path... paths) throws IOException {
-		final Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+		final Gson gson = new GsonBuilder().enableComplexMapKeySerialization()
+				.create();
 		this.gates = new ArrayList<>();
 		for (Path dir : paths) {
 			if (!Files.exists(dir)) {
@@ -38,7 +41,4 @@ public class JGateManager {
 		}
 	}
 
-	public List<JGate> getGates() {
-		return gates;
-	}
 }
