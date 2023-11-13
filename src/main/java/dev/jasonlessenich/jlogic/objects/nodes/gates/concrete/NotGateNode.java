@@ -1,6 +1,6 @@
-package dev.jasonlessenich.jlogic.nodes.gates.concrete;
+package dev.jasonlessenich.jlogic.objects.nodes.gates.concrete;
 
-import dev.jasonlessenich.jlogic.nodes.gates.GateNode;
+import dev.jasonlessenich.jlogic.objects.nodes.gates.GateNode;
 import dev.jasonlessenich.jlogic.utils.Point;
 
 import javax.annotation.Nonnull;

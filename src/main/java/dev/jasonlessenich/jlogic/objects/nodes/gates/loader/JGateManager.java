@@ -1,4 +1,4 @@
-package dev.jasonlessenich.jlogic.nodes.gates.loader;
+package dev.jasonlessenich.jlogic.objects.nodes.gates.loader;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

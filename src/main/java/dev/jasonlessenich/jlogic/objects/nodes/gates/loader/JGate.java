@@ -1,4 +1,4 @@
-package dev.jasonlessenich.jlogic.nodes.gates.loader;
+package dev.jasonlessenich.jlogic.objects.nodes.gates.loader;
 
 import lombok.Data;
 

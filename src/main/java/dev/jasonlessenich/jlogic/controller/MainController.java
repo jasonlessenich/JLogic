@@ -1,14 +1,14 @@
 package dev.jasonlessenich.jlogic.controller;
 
 import dev.jasonlessenich.jlogic.JLogicApplication;
-import dev.jasonlessenich.jlogic.nodes.DraggableNode;
-import dev.jasonlessenich.jlogic.nodes.gates.CustomGateNode;
-import dev.jasonlessenich.jlogic.nodes.gates.concrete.AndGateNode;
-import dev.jasonlessenich.jlogic.nodes.gates.concrete.NotGateNode;
-import dev.jasonlessenich.jlogic.nodes.gates.loader.JGate;
-import dev.jasonlessenich.jlogic.nodes.io.InputNode;
-import dev.jasonlessenich.jlogic.nodes.io.OutputNode;
-import dev.jasonlessenich.jlogic.nodes.pins.wires.Wire;
+import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
+import dev.jasonlessenich.jlogic.objects.nodes.gates.CustomGateNode;
+import dev.jasonlessenich.jlogic.objects.nodes.gates.concrete.AndGateNode;
+import dev.jasonlessenich.jlogic.objects.nodes.gates.concrete.NotGateNode;
+import dev.jasonlessenich.jlogic.objects.nodes.gates.loader.JGate;
+import dev.jasonlessenich.jlogic.objects.nodes.io.InputNode;
+import dev.jasonlessenich.jlogic.objects.nodes.io.OutputNode;
+import dev.jasonlessenich.jlogic.objects.wires.Wire;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.fxml.FXML;
@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class MainController {
-	public static final Map<Point, DraggableNode> NODES = new HashMap<>();
+	public static final Map<Point, ConnectableNode> NODES = new HashMap<>();
 	public static final List<Wire> WIRES = new ArrayList<>();
 
 	public static AnchorPane MAIN_PANE;
@@ -64,9 +64,8 @@ public class MainController {
 		mainPane.getChildren().add(wire);
 	}
 
-	private void addDraggable(@Nonnull Point point, @Nonnull Function<Point, DraggableNode> nodeFunction) {
-		final DraggableNode node = nodeFunction.apply(point);
-		NODES.put(point, node);
+	private void addConnectable(@Nonnull ConnectableNode node) {
+		NODES.put(node.getDrag().getPosition(), node);
 		mainPane.getChildren().add(node);
 	}
 
@@ -77,23 +76,23 @@ public class MainController {
 			MainController.simulationMode = simulationMode.isSelected();
 		});
 		final MenuItem addInput = new MenuItem("Add Input");
-		addInput.setOnAction(actionEvent -> addDraggable(lastContextMenuPoint, InputNode::new));
+		addInput.setOnAction(actionEvent -> addConnectable(new InputNode(lastContextMenuPoint)));
 		final MenuItem addOutput = new MenuItem("Add Output");
-		addOutput.setOnAction(actionEvent -> addDraggable(lastContextMenuPoint, OutputNode::new));
+		addOutput.setOnAction(actionEvent -> addConnectable(new OutputNode(lastContextMenuPoint)));
 		final MenuItem addWire = new MenuItem("Add Wire");
 		addWire.setOnAction(actionEvent -> addWire(lastContextMenuPoint, lastContextMenuPoint.addX(Constants.GRID_STEP_SIZE * 3)));
 		final Menu addGate = new Menu("Add Gate...");
 		final MenuItem addAndGate = new MenuItem("AND Gate");
-		addAndGate.setOnAction(e -> addDraggable(lastContextMenuPoint, AndGateNode::new));
+		addAndGate.setOnAction(e -> addConnectable(new AndGateNode(lastContextMenuPoint)));
 		final MenuItem addOrGate = new MenuItem("NOT Gate");
-		addOrGate.setOnAction(e -> addDraggable(lastContextMenuPoint, NotGateNode::new));
+		addOrGate.setOnAction(e -> addConnectable(new NotGateNode(lastContextMenuPoint)));
 		addGate.getItems().addAll(addAndGate, addOrGate, new SeparatorMenuItem());
 		// register gates
 		for (JGate gate : JLogicApplication.getGateManager().getGates()) {
 			final Menu gateMenu = new Menu("%s (%s)".formatted(gate.getName(), gate.getSymbol()));
 			for (JGate.Table table : gate.getTableDefinition()) {
 				final MenuItem subMenu = new MenuItem("%s IN / %s OUT".formatted(table.getInputCount(), table.getOutputCount()));
-				subMenu.setOnAction(actionEvent -> addDraggable(lastContextMenuPoint, point -> new CustomGateNode(point, gate, table)));
+				subMenu.setOnAction(actionEvent -> addConnectable(new CustomGateNode(lastContextMenuPoint, gate, table)));
 				gateMenu.getItems().add(subMenu);
 			}
 			addGate.getItems().add(gateMenu);

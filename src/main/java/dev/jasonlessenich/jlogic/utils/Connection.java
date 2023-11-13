@@ -1,6 +1,6 @@
 package dev.jasonlessenich.jlogic.utils;
 
-import dev.jasonlessenich.jlogic.nodes.pins.ConnectablePin;
+import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import lombok.Data;
 
 import javax.annotation.Nonnull;

@@ -1,7 +1,7 @@
-package dev.jasonlessenich.jlogic.nodes.gates;
+package dev.jasonlessenich.jlogic.objects.nodes.gates;
 
-import dev.jasonlessenich.jlogic.nodes.ConnectableNode;
-import dev.jasonlessenich.jlogic.nodes.Evaluable;
+import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
+import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.paint.Color;

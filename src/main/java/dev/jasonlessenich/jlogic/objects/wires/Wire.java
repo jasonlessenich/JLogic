@@ -1,4 +1,4 @@
-package dev.jasonlessenich.jlogic.nodes.pins.wires;
+package dev.jasonlessenich.jlogic.objects.wires;
 
 import dev.jasonlessenich.jlogic.controller.MainController;
 import dev.jasonlessenich.jlogic.utils.Constants;
@@ -95,12 +95,12 @@ public class Wire extends Parent {
 		line.setStrokeWidth(3);
 		line.setStroke(Color.BLACK);
 		line.setOnMouseMoved(me -> {
-			getChildren().removeIf(n -> n instanceof Circle && "WireIntersectionIndicator".equals(n.getId()));
-			final double x = PointUtils.step(me.getSceneX(), Constants.GRID_STEP_SIZE);
-			final double y = PointUtils.step(me.getSceneY(), Constants.GRID_STEP_SIZE);
-			final Circle circle = new Circle(x, y, Constants.NODE_CONNECTION_SIZE);
-			circle.setId("WireIntersectionIndicator");
-			getChildren().add(circle);
+			// getChildren().removeIf(n -> n instanceof Circle && "WireIntersectionIndicator".equals(n.getId()));
+			// final double x = PointUtils.step(me.getSceneX(), Constants.GRID_STEP_SIZE);
+			// final double y = PointUtils.step(me.getSceneY(), Constants.GRID_STEP_SIZE);
+			// final Circle circle = new Circle(x, y, Constants.NODE_CONNECTION_SIZE);
+			// circle.setId("WireIntersectionIndicator");
+			// getChildren().add(circle);
 		});
 		line.setOnMouseExited(me -> {
 			//getChildren().removeIf(n -> n instanceof Circle && "WireIntersectionIndicator".equals(n.getId()));

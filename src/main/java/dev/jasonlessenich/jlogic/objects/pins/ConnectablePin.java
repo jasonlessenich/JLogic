@@ -1,14 +1,13 @@
-package dev.jasonlessenich.jlogic.nodes.pins;
+package dev.jasonlessenich.jlogic.objects.pins;
 
 import dev.jasonlessenich.jlogic.controller.MainController;
-import dev.jasonlessenich.jlogic.nodes.ConnectableNode;
-import dev.jasonlessenich.jlogic.nodes.DraggableNode;
-import dev.jasonlessenich.jlogic.nodes.Evaluable;
-import dev.jasonlessenich.jlogic.nodes.io.InputNode;
-import dev.jasonlessenich.jlogic.nodes.io.OutputNode;
+import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
+import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
+import dev.jasonlessenich.jlogic.objects.nodes.io.InputNode;
+import dev.jasonlessenich.jlogic.objects.nodes.io.OutputNode;
 import dev.jasonlessenich.jlogic.utils.Connection;
 import dev.jasonlessenich.jlogic.utils.Constants;
-import dev.jasonlessenich.jlogic.nodes.pins.wires.Wire;
+import dev.jasonlessenich.jlogic.objects.wires.Wire;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
@@ -78,8 +77,7 @@ public class ConnectablePin extends Parent {
 	public static void evaluateConnections() {
 		// 			Target			   Source Nodes
 		final Map<ConnectableNode, List<ConnectableNode>> nodeTree = new HashMap<>();
-		for (DraggableNode node : MainController.NODES.values()) {
-			if (!(node instanceof ConnectableNode con)) continue;
+		for (ConnectableNode con : MainController.NODES.values()) {
 			final List<ConnectableNode> sources = con.getConnections().stream()
 					.filter(c -> c.getConnectionType() == Connection.Type.BACKWARD)
 					.map(Connection::getConnectionTo)
