@@ -18,4 +18,12 @@ public class Point {
 	public @Nonnull Point stepped(int step) {
 		return Point.of(PointUtils.step(x, step), PointUtils.step(y, step));
 	}
+
+	public Point addX(double x) {
+		return Point.of(this.x + x, y);
+	}
+
+	public Point addY(double y) {
+		return Point.of(x, this.y + y);
+	}
 }

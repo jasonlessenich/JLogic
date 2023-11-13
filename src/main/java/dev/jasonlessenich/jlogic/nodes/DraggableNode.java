@@ -1,6 +1,7 @@
 package dev.jasonlessenich.jlogic.nodes;
 
-import dev.jasonlessenich.jlogic.controller.MainViewController;
+import dev.jasonlessenich.jlogic.controller.MainController;
+import dev.jasonlessenich.jlogic.nodes.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import dev.jasonlessenich.jlogic.utils.PointUtils;
@@ -9,6 +10,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
@@ -48,7 +50,7 @@ public abstract class DraggableNode extends StackPane {
 				getScene().setCursor(Cursor.DEFAULT);
 			}
 			getScene().setCursor(Cursor.CLOSED_HAND);
-			if (ConnectableNode.connectMode || MainViewController.simulationMode) return;
+			if (MainController.simulationMode) return;
 			dragDelta.setX(me.getX());
 			dragDelta.setY(me.getY());
 		});
@@ -58,7 +60,8 @@ public abstract class DraggableNode extends StackPane {
 			}
 		});
 		setOnMouseDragged(me -> {
-			if (ConnectableNode.connectMode || MainViewController.simulationMode || !me.isPrimaryButtonDown()) return;
+			if (MainController.simulationMode || !me.isPrimaryButtonDown()) return;
+			if (me.getTarget() instanceof Circle circle && circle.getId() != null && circle.getId().equals("ConnectionPin")) return;
 			final double layoutX = getLayoutX() + me.getX() - dragDelta.getX();
 			final double layoutY = getLayoutY() + me.getY() - dragDelta.getY();
 			position.setX(getLayoutX());
@@ -81,15 +84,15 @@ public abstract class DraggableNode extends StackPane {
 			final AnchorPane pane = ((AnchorPane) getParent());
 			pane.getChildren().remove(this); // remove from pane
 			// delete all connections
-			for (DraggableNode node : MainViewController.NODES.values()) {
+			for (DraggableNode node : MainController.NODES.values()) {
 				if (node instanceof ConnectableNode connectableNode) {
-					connectableNode.connections.removeIf(c -> c.getConnectionFrom() == this || c.getConnectionTo() == this);
+					connectableNode.getConnections().removeIf(c -> c.getConnectionFrom().getParentNode() == this || c.getConnectionTo().getParentNode() == this);
 				}
 			}
 			// redraw all connections
-			MainViewController.NODES.remove(position);
-			ConnectableNode.redrawConnections(pane);
-			ConnectableNode.evaluateConnections();
+			MainController.NODES.remove(position);
+			ConnectablePin.redrawConnections(pane);
+			ConnectablePin.evaluateConnections();
 		});
 		return deleteNode;
 	}

@@ -1,17 +1,17 @@
 package dev.jasonlessenich.jlogic.utils;
 
-import dev.jasonlessenich.jlogic.nodes.ConnectableNode;
+import dev.jasonlessenich.jlogic.nodes.pins.ConnectablePin;
 import lombok.Data;
 
 import javax.annotation.Nonnull;
 
 @Data
 public class Connection {
-	private final ConnectableNode connectionFrom;
-	private final ConnectableNode connectionTo;
+	private final ConnectablePin connectionFrom;
+	private final ConnectablePin connectionTo;
 	private final Type connectionType;
 
-	public Connection(@Nonnull ConnectableNode connectionFrom, @Nonnull ConnectableNode connectionTo, @Nonnull Type connectionType) {
+	public Connection(@Nonnull ConnectablePin connectionFrom, @Nonnull ConnectablePin connectionTo, @Nonnull Type connectionType) {
 		this.connectionFrom = connectionFrom;
 		this.connectionTo = connectionTo;
 		this.connectionType = connectionType;

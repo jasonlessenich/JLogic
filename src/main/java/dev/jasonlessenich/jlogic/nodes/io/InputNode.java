@@ -1,7 +1,7 @@
 package dev.jasonlessenich.jlogic.nodes.io;
 
-import dev.jasonlessenich.jlogic.controller.MainViewController;
-import dev.jasonlessenich.jlogic.nodes.ConnectableNode;
+import dev.jasonlessenich.jlogic.controller.MainController;
+import dev.jasonlessenich.jlogic.nodes.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -14,13 +14,13 @@ public class InputNode extends IONode {
 		super(point, circle -> {
 			circle.setStroke(Color.BLACK);
 			circle.setStrokeWidth(2);
-		}, 0, -1);
+		}, 0, 1);
 		final EventHandler<? super MouseEvent> onMousePressed = getOnMousePressed();
 		setOnMousePressed(me -> {
 			onMousePressed.handle(me);
-			if (MainViewController.simulationMode && me.isPrimaryButtonDown()) {
+			if (MainController.simulationMode && me.isPrimaryButtonDown()) {
 				toggleActivated();
-				ConnectableNode.evaluateConnections();
+				ConnectablePin.evaluateConnections();
 			}
 		});
 	}

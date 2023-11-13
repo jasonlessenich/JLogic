@@ -21,6 +21,7 @@ public abstract class IONode extends ConnectableNode {
 		this.circle = new Circle((double) Constants.NODE_SIZE / 2, Color.RED);
 		circleConsumer.accept(circle);
 		getChildren().add(circle);
+		ConnectableNode.redrawPins(this);
 	}
 
 	public void setActivated(boolean activated) {

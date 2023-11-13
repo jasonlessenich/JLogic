@@ -19,10 +19,10 @@ public class Constants {
 	/**
 	 * All nodes' connection size.
 	 */
-	public static final int NODE_CONNECTION_SIZE = 3;
+	public static final int NODE_CONNECTION_SIZE = 5;
 
 	/**
 	 * The grid's step size.
 	 */
-	public static final int GRID_STEP_SIZE = 20;
+	public static final int GRID_STEP_SIZE = 10;
 }
