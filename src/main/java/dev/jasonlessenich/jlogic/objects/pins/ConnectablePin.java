@@ -5,7 +5,7 @@ import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
 import dev.jasonlessenich.jlogic.objects.nodes.io.InputNode;
 import dev.jasonlessenich.jlogic.objects.nodes.io.OutputNode;
-import dev.jasonlessenich.jlogic.utils.Connection;
+import dev.jasonlessenich.jlogic.objects.Connection;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.objects.wires.Wire;
 import dev.jasonlessenich.jlogic.utils.Point;
@@ -14,6 +14,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
@@ -29,45 +30,24 @@ public class ConnectablePin extends Parent {
 	private static final Color HOVER_COLOR = Color.DEEPSKYBLUE;
 
 	@Getter
-	private final ConnectableNode parentNode;
+	private final ConnectableNode node;
 	@Getter
-	private final boolean input;
+	@Setter
+	private Point positionDifference;
 
 	private final Circle model;
 
-	public ConnectablePin(ConnectableNode parentNode, boolean input) {
-		this.parentNode = parentNode;
-		this.input = input;
+	public ConnectablePin(
+			@Nonnull ConnectableNode node,
+			@Nonnull Point positionDifference
+	) {
+		setId("ConnectablePin");
+		this.node = node;
+		this.positionDifference = positionDifference;
 		model = buildModel();
 		getChildren().add(model);
 		setOnMouseEntered(e -> model.setFill(HOVER_COLOR));
 		setOnMouseExited(e -> model.setFill(DEFAULT_COLOR));
-
-		final Point startDrag = new Point();
-		final Point endDrag = new Point();
-//		setOnMousePressed(me -> {
-//			// get center of pin
-//			startDrag.setX(me.getSceneX());
-//			startDrag.setY(PointUtils.step(me.getSceneY(), Constants.GRID_STEP_SIZE));
-//		});
-//		setOnMouseDragged(me -> {
-//			// remove all preview wires
-//			MainViewController.MAIN_PANE.getChildren().removeIf(n -> n instanceof Wire && "WirePreview".equals(n.getId()));
-//			endDrag.setX(me.getSceneX());
-//			endDrag.setY(me.getSceneY());
-//			// get node at mouse position
-//			MainViewController.MAIN_PANE.getChildren().add(
-//					new Wire(startDrag, endDrag.stepped(Constants.GRID_STEP_SIZE), true)
-//			);
-//		});
-//		setOnMouseDragReleased(me -> {
-//			// remove all preview wires
-//			MainViewController.MAIN_PANE.getChildren().removeIf(n -> n instanceof Wire && "WirePreview".equals(n.getId()));
-//			// get node at mouse position
-//			MainViewController.MAIN_PANE.getChildren().add(
-//					new Wire(startDrag, endDrag.stepped(Constants.GRID_STEP_SIZE), false)
-//			);
-//		});
 	}
 
 	public static void redrawConnections(@Nonnull Pane pane) {
@@ -81,7 +61,7 @@ public class ConnectablePin extends Parent {
 			final List<ConnectableNode> sources = con.getConnections().stream()
 					.filter(c -> c.getConnectionType() == Connection.Type.BACKWARD)
 					.map(Connection::getConnectionTo)
-					.map(ConnectablePin::getParentNode)
+					.map(ConnectablePin::getNode)
 					.toList();
 			nodeTree.put(con, sources);
 		}
@@ -96,7 +76,7 @@ public class ConnectablePin extends Parent {
 	private static @Nonnull List<Boolean> evaluateSources(@Nonnull ConnectableNode node) {
 		List<Boolean> input = new ArrayList<>();
 		for (Connection source : node.getSourceConnections()) {
-			final ConnectableNode sourceNode = source.getConnectionTo().getParentNode();
+			final ConnectableNode sourceNode = source.getConnectionTo().getNode();
 			if (sourceNode instanceof InputNode in) {
 				input.add(in.isActivated());
 			} else if (sourceNode instanceof Evaluable eval) {
@@ -109,17 +89,17 @@ public class ConnectablePin extends Parent {
 	}
 
 	public boolean canConnectTo(@Nonnull ConnectablePin pin) {
-		return parentNode.getConnections().stream().noneMatch(c -> Objects.equals(c, new Connection(this, pin, Connection.Type.FORWARD))) &&
-				(parentNode.getTargetConnections().size() < parentNode.getOutputCount()) &&
-				(parentNode.getSourceConnections().size() < pin.getParentNode().getInputCount());
+		return node.getConnections().stream().noneMatch(c -> Objects.equals(c, new Connection(this, pin, Connection.Type.FORWARD))) &&
+				(node.getTargetConnections().size() < node.getOutputCount()) &&
+				(node.getSourceConnections().size() < pin.getNode().getInputCount());
 	}
 
 	public void connectTo(@Nonnull ConnectablePin pin) {
 		final boolean canConnect = canConnectTo(pin);
 		if (canConnect) {
 			log.info("Connected " + this + " to " + pin);
-			parentNode.getConnections().add(new Connection(this, pin, Connection.Type.FORWARD));
-			pin.getParentNode().getConnections().add(new Connection(pin, this, Connection.Type.BACKWARD));
+			node.getConnections().add(new Connection(this, pin, Connection.Type.FORWARD));
+			pin.getNode().getConnections().add(new Connection(pin, this, Connection.Type.BACKWARD));
 			// drawArrowLine(this, pin, (Pane) getParent());
 			evaluateConnections();
 		}
@@ -127,8 +107,7 @@ public class ConnectablePin extends Parent {
 
 	private @Nonnull Circle buildModel() {
 		final Circle circle = new Circle();
-		circle.setId("ConnectionPin");
-		circle.setRadius(Constants.NODE_CONNECTION_SIZE);
+		circle.setRadius((double) Constants.PIN_SIZE / 2);
 		circle.setFill(DEFAULT_COLOR);
 		circle.setStroke(Color.BLACK);
 		circle.setStrokeWidth(2);

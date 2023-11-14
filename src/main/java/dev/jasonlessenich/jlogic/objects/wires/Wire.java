@@ -61,7 +61,7 @@ public class Wire extends Parent {
 		final Circle circle = new Circle();
 		circle.setCenterX(p.getX());
 		circle.setCenterY(p.getY());
-		circle.setRadius(Constants.NODE_CONNECTION_SIZE);
+		circle.setRadius(Constants.PIN_SIZE);
 		circle.setFill(PIN_FILL);
 		circle.setStroke(Color.BLACK);
 		circle.setStrokeWidth(2);

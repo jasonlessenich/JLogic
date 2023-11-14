@@ -1,4 +1,4 @@
-package dev.jasonlessenich.jlogic.utils;
+package dev.jasonlessenich.jlogic.objects;
 
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import lombok.Data;
