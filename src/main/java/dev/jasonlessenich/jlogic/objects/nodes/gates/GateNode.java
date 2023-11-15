@@ -36,10 +36,11 @@ public abstract class GateNode extends ConnectableNode implements Evaluable {
 		final Rectangle rect = new Rectangle(width, height, Color.WHITE);
 		rect.setStroke(Color.BLACK);
 		rect.setStrokeWidth(2);
-		stackPane.getChildren().add(rect);
+		// TODO: fix symbol being null (super constructor called before initialization of 'symbol')
 		final Text text = new Text(getSymbol());
 		text.setStyle("-fx-font-weight: bold; -fx-font-size: 20");
 		stackPane.getChildren().add(text);
+		stackPane.getChildren().add(rect);
 		return NodeUtils.setSize(stackPane, width, height);
 	}
 }

@@ -1,28 +1,21 @@
 package dev.jasonlessenich.jlogic.objects.nodes;
 
-import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.objects.Connection;
 import dev.jasonlessenich.jlogic.objects.pins.PinLayoutStrategy;
-import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Drag;
 import dev.jasonlessenich.jlogic.utils.Point;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Getter
 @Slf4j
-public abstract class ConnectableNode extends StackPane {
+public abstract class ConnectableNode extends Pane {
 	private final PinLayoutStrategy layout;
 	private final List<Connection> connections;
 	private final int inputCount;
@@ -30,7 +23,12 @@ public abstract class ConnectableNode extends StackPane {
 	private final Drag drag;
 	private final Region model;
 
-	public ConnectableNode(@Nonnull Point point, @Nonnull PinLayoutStrategy layout, int inputCount, int outputCount) {
+	public ConnectableNode(
+			@Nonnull Point point,
+			@Nonnull PinLayoutStrategy layout,
+			int inputCount,
+			int outputCount
+	) {
 		this.layout = layout;
 		this.connections = new ArrayList<>();
 		this.inputCount = inputCount;
@@ -39,7 +37,6 @@ public abstract class ConnectableNode extends StackPane {
 				.setInitialPosition(point)
 				.build();
 		this.model = buildModel();
-		getChildren().add(model);
 		layout.layoutPins(this);
 	}
 

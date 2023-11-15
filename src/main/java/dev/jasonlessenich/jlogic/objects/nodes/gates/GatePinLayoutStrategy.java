@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 public class GatePinLayoutStrategy implements PinLayoutStrategy {
 	@Override
 	public void layoutPins(@Nonnull ConnectableNode node) {
+		removePins(node);
 		if (node.getInputCount() > 0)
 			layoutNodePins(node, node.getInputCount(), true);
 		if (node.getOutputCount() > 0)

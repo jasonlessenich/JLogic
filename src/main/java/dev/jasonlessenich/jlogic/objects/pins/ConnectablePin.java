@@ -33,21 +33,27 @@ public class ConnectablePin extends Parent {
 	private final ConnectableNode node;
 	@Getter
 	@Setter
-	private Point positionDifference;
+	private Point displacement;
 
 	private final Circle model;
 
 	public ConnectablePin(
 			@Nonnull ConnectableNode node,
-			@Nonnull Point positionDifference
+			@Nonnull Point displacement
 	) {
 		setId("ConnectablePin");
 		this.node = node;
-		this.positionDifference = positionDifference;
+		this.displacement = displacement;
 		model = buildModel();
 		getChildren().add(model);
 		setOnMouseEntered(e -> model.setFill(HOVER_COLOR));
 		setOnMouseExited(e -> model.setFill(DEFAULT_COLOR));
+	}
+
+	public Point getPosition() {
+		return node.getPosition()
+				.addX(displacement.getX())
+				.addY(displacement.getY());
 	}
 
 	public static void redrawConnections(@Nonnull Pane pane) {
