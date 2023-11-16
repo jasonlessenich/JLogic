@@ -6,6 +6,7 @@ import dev.jasonlessenich.jlogic.utils.Drag;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,7 +16,7 @@ import java.util.List;
 
 @Getter
 @Slf4j
-public abstract class ConnectableNode extends Pane {
+public abstract class ConnectableNode extends StackPane {
 	private final PinLayoutStrategy layout;
 	private final List<Connection> connections;
 	private final int inputCount;
@@ -35,8 +36,10 @@ public abstract class ConnectableNode extends Pane {
 		this.outputCount = outputCount;
 		this.drag = new Drag.Builder(this)
 				.setInitialPosition(point)
+				.setCanDrag(node -> !"ConnectablePinModel".equals(node.getId()))
 				.build();
 		this.model = buildModel();
+		getChildren().add(model);
 		layout.layoutPins(this);
 	}
 

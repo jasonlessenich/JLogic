@@ -10,24 +10,46 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import lombok.Getter;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 public class Wire extends Parent {
 	private static final Color PIN_FILL = Color.WHITE;
 	private static final Color PIN_CONNECTED = Color.LIGHTBLUE;
 
+	@Nonnull
+	@Getter
+	private final Point start;
+	@Nonnull
+	@Getter
+	private final Point end;
 	private final Line line;
-	private final Circle startPin, endPin;
+	@Nullable
+	private final Circle startPin;
+	@Nullable
+	private final Circle endPin;
 
 	public Wire(@Nonnull Point start, @Nonnull Point end) {
+		this(start, end, true, true);
+	}
+
+	public Wire(@Nonnull Point start, @Nonnull Point end, boolean hasStart, boolean hasEnd) {
 		setId("Wire");
-		this.line = buildLine(start.getX(), start.getY(), end.getX(), end.getY());
-		this.startPin = buildWirePin(start, true);
-		this.endPin = buildWirePin(end, false);
+		this.start = start;
+		this.end = end;
+		this.line = buildLine(start, end);
 		getChildren().add(line);
-		getChildren().addAll(startPin, endPin);
+		this.startPin = hasStart ? buildWirePin(start, true) : null;
+		if (startPin != null) {
+			getChildren().add(startPin);
+		}
+		this.endPin = hasEnd ? buildWirePin(end, false) : null;
+		if (endPin != null) {
+			getChildren().add(endPin);
+		}
 		final ContextMenu contextMenu = buildDefaultContextMenu();
 		setOnMousePressed(me -> {
 			if (me.isSecondaryButtonDown()) {
@@ -50,18 +72,11 @@ public class Wire extends Parent {
 		getChildren().removeIf(n -> n == endPin);
 	}
 
-	public Optional<Wire> intersectsWire(Point p) {
-		return MainController.WIRES.stream()
-				.filter(wire -> wire != this)
-				.filter(wire -> PointUtils.isOnLine(p, Point.of(wire.line.getStartX(), wire.line.getStartY()), Point.of(wire.line.getEndX(), wire.line.getEndY())))
-				.findFirst();
-	}
-
 	private @Nonnull Circle buildWirePin(@Nonnull Point p, boolean isStart) {
 		final Circle circle = new Circle();
 		circle.setCenterX(p.getX());
 		circle.setCenterY(p.getY());
-		circle.setRadius(Constants.PIN_SIZE);
+		circle.setRadius((double) Constants.PIN_SIZE / 2);
 		circle.setFill(PIN_FILL);
 		circle.setStroke(Color.BLACK);
 		circle.setStrokeWidth(2);
@@ -90,21 +105,10 @@ public class Wire extends Parent {
 	}
 
 	@Nonnull
-	private Line buildLine(double startX, double startY, double endX, double endY) {
-		final Line line = new Line(startX, startY, endX, endY);
+	private Line buildLine(@Nonnull Point start, @Nonnull Point end) {
+		final Line line = new Line(start.getX(), start.getY(), end.getX(), end.getY());
 		line.setStrokeWidth(3);
 		line.setStroke(Color.BLACK);
-		line.setOnMouseMoved(me -> {
-			// getChildren().removeIf(n -> n instanceof Circle && "WireIntersectionIndicator".equals(n.getId()));
-			// final double x = PointUtils.step(me.getSceneX(), Constants.GRID_STEP_SIZE);
-			// final double y = PointUtils.step(me.getSceneY(), Constants.GRID_STEP_SIZE);
-			// final Circle circle = new Circle(x, y, Constants.NODE_CONNECTION_SIZE);
-			// circle.setId("WireIntersectionIndicator");
-			// getChildren().add(circle);
-		});
-		line.setOnMouseExited(me -> {
-			//getChildren().removeIf(n -> n instanceof Circle && "WireIntersectionIndicator".equals(n.getId()));
-		});
 		return line;
 	}
 

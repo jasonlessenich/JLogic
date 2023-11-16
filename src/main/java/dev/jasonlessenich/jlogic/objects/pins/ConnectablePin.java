@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -48,12 +49,20 @@ public class ConnectablePin extends Parent {
 		getChildren().add(model);
 		setOnMouseEntered(e -> model.setFill(HOVER_COLOR));
 		setOnMouseExited(e -> model.setFill(DEFAULT_COLOR));
+		setOnMouseDragged(me -> {
+			final Point from = getPosition();
+			final Point to = Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE);
+			if (MainController.WIRES.containsKey(new Pair<>(from, to))) return;
+			final Wire wire = new Wire(from, to, false, true);
+			MainController.addWire(wire);
+		});
 	}
 
 	public Point getPosition() {
+		final double nodeRad = ((double) Constants.NODE_SIZE / 2);
 		return node.getPosition()
-				.addX(displacement.getX())
-				.addY(displacement.getY());
+				.addX(displacement.getX() + nodeRad)
+				.addY(displacement.getY() + nodeRad);
 	}
 
 	public static void redrawConnections(@Nonnull Pane pane) {
@@ -113,6 +122,7 @@ public class ConnectablePin extends Parent {
 
 	private @Nonnull Circle buildModel() {
 		final Circle circle = new Circle();
+		circle.setId("ConnectablePinModel");
 		circle.setRadius((double) Constants.PIN_SIZE / 2);
 		circle.setFill(DEFAULT_COLOR);
 		circle.setStroke(Color.BLACK);

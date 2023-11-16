@@ -19,6 +19,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import java.util.function.Function;
 
 public class MainController {
 	public static final Map<Point, ConnectableNode> NODES = new HashMap<>();
-	public static final List<Wire> WIRES = new ArrayList<>();
+	public static final Map<Pair<Point, Point>, Wire> WIRES = new HashMap<>();
 
 	public static AnchorPane MAIN_PANE;
 
@@ -58,10 +59,9 @@ public class MainController {
 		});
 	}
 
-	private void addWire(@Nonnull Point start, @Nonnull Point end) {
-		final Wire wire = new Wire(start, end);
-		WIRES.add(wire);
-		mainPane.getChildren().add(wire);
+	public static void addWire(Wire wire) {
+		WIRES.put(new Pair<>(wire.getStart(), wire.getEnd()), wire);
+		MAIN_PANE.getChildren().add(wire);
 	}
 
 	private void addConnectable(@Nonnull ConnectableNode node) {
@@ -80,7 +80,7 @@ public class MainController {
 		final MenuItem addOutput = new MenuItem("Add Output");
 		addOutput.setOnAction(actionEvent -> addConnectable(new OutputNode(lastContextMenuPoint)));
 		final MenuItem addWire = new MenuItem("Add Wire");
-		addWire.setOnAction(actionEvent -> addWire(lastContextMenuPoint, lastContextMenuPoint.addX(Constants.GRID_STEP_SIZE * 3)));
+		addWire.setOnAction(actionEvent -> addWire(new Wire(lastContextMenuPoint, lastContextMenuPoint.addX(Constants.GRID_STEP_SIZE * 3))));
 		final Menu addGate = new Menu("Add Gate...");
 		final MenuItem addAndGate = new MenuItem("AND Gate");
 		addAndGate.setOnAction(e -> addConnectable(new AndGateNode(lastContextMenuPoint)));
