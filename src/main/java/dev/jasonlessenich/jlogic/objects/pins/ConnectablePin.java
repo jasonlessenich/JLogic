@@ -64,59 +64,10 @@ public class ConnectablePin extends Parent {
 				.addY(displacement.getY() + getNode().getModel().getMaxHeight() / 2);
 	}
 
-	public static void redrawConnections(@Nonnull Pane pane) {
-		pane.getChildren().removeIf(n -> n instanceof Wire);
-	}
-
-	public static void evaluateConnections() {
-		// 			Target			   Source Nodes
-		final Map<ConnectableNode, List<ConnectableNode>> nodeTree = new HashMap<>();
-		for (ConnectableNode con : MainController.NODES.values()) {
-			final List<ConnectableNode> sources = con.getConnections().stream()
-					.filter(c -> c.getConnectionType() == Connection.Type.BACKWARD)
-					.map(Connection::getConnectionTo)
-					.map(ConnectablePin::getNode)
-					.toList();
-			nodeTree.put(con, sources);
-		}
-		// pretty print node tree
-		for (Map.Entry<ConnectableNode, List<ConnectableNode>> entry : nodeTree.entrySet()) {
-			if (!(entry.getKey() instanceof OutputNode out)) continue;
-			final boolean result = out.evaluate(evaluateSources(out));
-			out.setActivated(result);
-		}
-	}
-
-	private static @Nonnull List<Boolean> evaluateSources(@Nonnull ConnectableNode node) {
-		List<Boolean> input = new ArrayList<>();
-		for (Connection source : node.getSourceConnections()) {
-			final ConnectableNode sourceNode = source.getConnectionTo().getNode();
-			if (sourceNode instanceof InputNode in) {
-				input.add(in.isActivated());
-			} else if (sourceNode instanceof Evaluable eval) {
-				input.add(eval.evaluate(evaluateSources(sourceNode)));
-			} else {
-				throw new IllegalStateException("Source node " + sourceNode + " is not an InputNode or Evaluable");
-			}
-		}
-		return input;
-	}
-
 	public boolean canConnectTo(@Nonnull ConnectablePin pin) {
 		return node.getConnections().stream().noneMatch(c -> Objects.equals(c, new Connection(this, pin, Connection.Type.FORWARD))) &&
 				(node.getTargetConnections().size() < node.getOutputCount()) &&
 				(node.getSourceConnections().size() < pin.getNode().getInputCount());
-	}
-
-	public void connectTo(@Nonnull ConnectablePin pin) {
-		final boolean canConnect = canConnectTo(pin);
-		if (canConnect) {
-			log.info("Connected " + this + " to " + pin);
-			node.getConnections().add(new Connection(this, pin, Connection.Type.FORWARD));
-			pin.getNode().getConnections().add(new Connection(pin, this, Connection.Type.BACKWARD));
-			// drawArrowLine(this, pin, (Pane) getParent());
-			evaluateConnections();
-		}
 	}
 
 	private @Nonnull Circle buildModel() {
@@ -127,5 +78,10 @@ public class ConnectablePin extends Parent {
 		circle.setStroke(Color.BLACK);
 		circle.setStrokeWidth(2);
 		return circle;
+	}
+
+	public enum Type {
+		INPUT,
+		OUTPUT
 	}
 }

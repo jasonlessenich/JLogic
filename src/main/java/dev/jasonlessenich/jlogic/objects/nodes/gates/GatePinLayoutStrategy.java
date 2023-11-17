@@ -7,19 +7,27 @@ import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GatePinLayoutStrategy implements PinLayoutStrategy {
 	@Override
-	public void layoutPins(@Nonnull ConnectableNode node) {
+	public Map<ConnectablePin.Type, List<ConnectablePin>> layoutPins(@Nonnull ConnectableNode node) {
 		removePins(node);
+		final Map<ConnectablePin.Type, List<ConnectablePin>> pinMap = new HashMap<>();
 		if (node.getInputCount() > 0)
-			layoutNodePins(node, node.getInputCount(), true);
+			pinMap.put(ConnectablePin.Type.INPUT, layoutNodePins(node, node.getInputCount(), true));
 		if (node.getOutputCount() > 0)
-			layoutNodePins(node, node.getOutputCount(), false);
+			pinMap.put(ConnectablePin.Type.OUTPUT, layoutNodePins(node, node.getOutputCount(), false));
+		return pinMap;
 	}
 
-	private void layoutNodePins(@Nonnull ConnectableNode node, int count, boolean isInput) {
+	@Nonnull
+	private List<ConnectablePin> layoutNodePins(@Nonnull ConnectableNode node, int count, boolean isInput) {
 		final double requiredHeight = Constants.PIN_SIZE * (2 * count);
+		final List<ConnectablePin> pins = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			double x = (node.getModel().getMaxWidth() / 2);
 			if (isInput) x *= -1;
@@ -28,6 +36,8 @@ public class GatePinLayoutStrategy implements PinLayoutStrategy {
 			pin.setTranslateX(x);
 			pin.setTranslateY(y);
 			node.getChildren().add(pin);
+			pins.add(pin);
 		}
+		return pins;
 	}
 }

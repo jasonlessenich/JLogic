@@ -26,7 +26,7 @@ public class InputNode extends IONode {
 			onMousePressed.handle(me);
 			if (MainController.simulationMode && me.isPrimaryButtonDown()) {
 				toggleActivated();
-				ConnectablePin.evaluateConnections();
+				// TODO: evaluate circuit
 			}
 		});
 	}
