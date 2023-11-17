@@ -50,19 +50,18 @@ public class ConnectablePin extends Parent {
 		setOnMouseEntered(e -> model.setFill(HOVER_COLOR));
 		setOnMouseExited(e -> model.setFill(DEFAULT_COLOR));
 		setOnMouseDragged(me -> {
+			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof Wire);
 			final Point from = getPosition();
 			final Point to = Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE);
-			if (MainController.WIRES.containsKey(new Pair<>(from, to))) return;
 			final Wire wire = new Wire(from, to, false, true);
-			MainController.addWire(wire);
+			MainController.MAIN_PANE.getChildren().add(wire);
 		});
 	}
 
 	public Point getPosition() {
-		final double nodeRad = ((double) Constants.NODE_SIZE / 2);
 		return node.getPosition()
-				.addX(displacement.getX() + nodeRad)
-				.addY(displacement.getY() + nodeRad);
+				.addX(displacement.getX() + getNode().getModel().getMaxWidth() / 2)
+				.addY(displacement.getY() + getNode().getModel().getMaxHeight() / 2);
 	}
 
 	public static void redrawConnections(@Nonnull Pane pane) {
