@@ -26,6 +26,7 @@ public abstract class GateNode extends ConnectableNode implements Evaluable {
 	public GateNode(@Nonnull Point point, int inputCount, int outputCount, @Nonnull String symbol) {
 		super(point, new GatePinLayoutStrategy(), inputCount, outputCount);
 		this.symbol = symbol;
+		((StackPane) getModel()).getChildren().add(buildSymbolText());
 	}
 
 	@Override
@@ -36,11 +37,14 @@ public abstract class GateNode extends ConnectableNode implements Evaluable {
 		final Rectangle rect = new Rectangle(width, height, Color.WHITE);
 		rect.setStroke(Color.BLACK);
 		rect.setStrokeWidth(2);
-		// TODO: fix symbol being null (super constructor called before initialization of 'symbol')
-		final Text text = new Text(getSymbol());
-		text.setStyle("-fx-font-weight: bold; -fx-font-size: 20");
-		stackPane.getChildren().add(text);
 		stackPane.getChildren().add(rect);
 		return NodeUtils.setSize(stackPane, width, height);
+	}
+
+	@Nonnull
+	private Text buildSymbolText() {
+		final Text text = new Text(getSymbol());
+		text.setStyle("-fx-font-weight: bold");
+		return text;
 	}
 }
