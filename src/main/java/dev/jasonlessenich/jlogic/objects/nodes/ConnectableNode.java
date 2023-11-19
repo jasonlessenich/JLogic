@@ -48,7 +48,7 @@ public abstract class ConnectableNode extends StackPane {
 	public abstract Region buildModel();
 
 	public Point getPosition() {
-		return getDrag().getPosition();
+		return Point.of(getLayoutX(), getLayoutY());
 	}
 
 	public List<ConnectablePin> getInputPins() {

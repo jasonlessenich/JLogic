@@ -2,27 +2,18 @@ package dev.jasonlessenich.jlogic.objects.pins;
 
 import dev.jasonlessenich.jlogic.controller.MainController;
 import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
-import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
-import dev.jasonlessenich.jlogic.objects.nodes.io.InputNode;
-import dev.jasonlessenich.jlogic.objects.nodes.io.OutputNode;
 import dev.jasonlessenich.jlogic.objects.Connection;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.objects.wires.Wire;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.Parent;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -60,8 +51,8 @@ public class ConnectablePin extends Parent {
 
 	public Point getPosition() {
 		return node.getPosition()
-				.addX(displacement.getX() + getNode().getModel().getMaxWidth() / 2)
-				.addY(displacement.getY() + getNode().getModel().getMaxHeight() / 2);
+				.addX(displacement.getX() + node.getModel().getMaxWidth() / 2)
+				.addY(displacement.getY() + node.getModel().getMaxHeight() / 2);
 	}
 
 	public boolean canConnectTo(@Nonnull ConnectablePin pin) {

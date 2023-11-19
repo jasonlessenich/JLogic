@@ -4,7 +4,6 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Circle;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
@@ -81,8 +80,8 @@ public class Drag {
 					node.getLayoutX() + me.getX() - dragDelta.getX(),
 					node.getLayoutY() + me.getY() - dragDelta.getY()
 			);
-			position.setX(newLayout.getX());
-			position.setY(newLayout.getY());
+			position.setX(node.getLayoutX());
+			position.setY(node.getLayoutY());
 			if (step != null) newLayout = newLayout.stepped(step);
 			if (onDrag != null) onDrag.accept(newLayout);
 			node.relocate(newLayout.getX(), newLayout.getY());
