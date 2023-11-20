@@ -26,6 +26,8 @@ public class ConnectablePin extends Parent {
 	@Getter
 	private final String name;
 	@Getter
+	private final Type type;
+	@Getter
 	private final ConnectableNode node;
 	@Getter
 	@Setter
@@ -38,11 +40,13 @@ public class ConnectablePin extends Parent {
 
 	public ConnectablePin(
 			@Nonnull String name,
+			@Nonnull Type type,
 			@Nonnull ConnectableNode node,
 			@Nonnull Point displacement
 	) {
 		setId("ConnectablePin");
 		this.name = name;
+		this.type = type;
 		this.node = node;
 		this.displacement = displacement;
 		model = buildModel();
@@ -52,9 +56,11 @@ public class ConnectablePin extends Parent {
 		setOnMouseDragged(me -> {
 			// clear old wire
 			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof Wire && n == this.wire);
-			final Point from = getPinPosition();
-			final Point to = Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE);
-			final Wire wire = new Wire(from, to, this, null);
+			final Point start = getPinPosition();
+			final Point end = Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE);
+			final Wire wire = type == Type.OUTPUT
+					? new Wire(start, end, this, null)
+					: new Wire(end, start, null, this);
 			// final Optional<ConnectablePin> pinOptional = wire.checkConnection(node, to);
 			// pinOptional.ifPresent(wire::connect);
 			// add new wire at mouse pos

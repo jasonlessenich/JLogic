@@ -36,7 +36,9 @@ public class IOLayoutStrategy implements PinLayoutStrategy {
 		final String name = namingStrategy.calculateName(1);
 		double x = (node.getModel().getMaxWidth() / 2);
 		if (isInput) x *= -1;
-		final ConnectablePin pin = new ConnectablePin(name, node, Point.of(x, 0));
+		final ConnectablePin pin = new ConnectablePin(
+				name, isInput ? ConnectablePin.Type.INPUT : ConnectablePin.Type.OUTPUT, node, Point.of(x, 0)
+		);
 		pin.setTranslateX(x);
 		node.getChildren().add(pin);
 		return List.of(pin);

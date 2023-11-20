@@ -45,7 +45,9 @@ public class GateLayoutStrategy implements PinLayoutStrategy {
 			double x = (node.getModel().getMaxWidth() / 2);
 			if (isInput) x *= -1;
 			double y = (((i * Constants.PIN_SIZE) * 2) - requiredHeight / 2) + Constants.PIN_SIZE;
-			final ConnectablePin pin = new ConnectablePin(label, node, Point.of(x, y));
+			final ConnectablePin pin = new ConnectablePin(
+					label, isInput ? ConnectablePin.Type.INPUT : ConnectablePin.Type.OUTPUT, node, Point.of(x, y)
+			);
 			pin.setTranslateX(x);
 			pin.setTranslateY(y);
 			node.getChildren().add(pin);
