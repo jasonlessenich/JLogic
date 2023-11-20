@@ -24,6 +24,8 @@ public class ConnectablePin extends Parent {
 	private static final Color HOVER_COLOR = Color.DEEPSKYBLUE;
 
 	@Getter
+	private final String name;
+	@Getter
 	private final ConnectableNode node;
 	@Getter
 	@Setter
@@ -35,10 +37,12 @@ public class ConnectablePin extends Parent {
 	private final Circle model;
 
 	public ConnectablePin(
+			@Nonnull String name,
 			@Nonnull ConnectableNode node,
 			@Nonnull Point displacement
 	) {
 		setId("ConnectablePin");
+		this.name = name;
 		this.node = node;
 		this.displacement = displacement;
 		model = buildModel();

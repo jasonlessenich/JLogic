@@ -5,6 +5,7 @@ import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.objects.pins.PinLayoutStrategy;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
+import javafx.scene.text.Text;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -32,10 +33,16 @@ public class GatePinLayoutStrategy implements PinLayoutStrategy {
 			double x = (node.getModel().getMaxWidth() / 2);
 			if (isInput) x *= -1;
 			double y = (((i * Constants.PIN_SIZE) * 2) - requiredHeight / 2) + Constants.PIN_SIZE;
-			final ConnectablePin pin = new ConnectablePin(node, Point.of(x, y));
+			final ConnectablePin pin = new ConnectablePin(String.valueOf(i), node, Point.of(x, y));
 			pin.setTranslateX(x);
 			pin.setTranslateY(y);
 			node.getChildren().add(pin);
+			if (count > 1) {
+				final Text name = new Text(pin.getName());
+				name.setTranslateX(x - (isInput ? 10 : -10));
+				name.setTranslateY(y - 10);
+				node.getChildren().add(name);
+			}
 			pins.add(pin);
 		}
 		return pins;

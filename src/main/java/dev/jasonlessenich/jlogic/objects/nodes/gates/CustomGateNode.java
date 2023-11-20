@@ -26,7 +26,7 @@ public class CustomGateNode extends GateNode implements Evaluable {
 		log.info("Evaluating {} with table {}", binaryString, table);
 		final Boolean result = table.getMap().get(binaryString);
 		if (result == null)
-			throw new IllegalStateException("No result for [" + binaryString + "] in table map: " + table.getMap());
-		return result;
+			log.warn("No result for [" + binaryString + "] in table map: " + table.getMap());
+		return result != null && result;
 	}
 }
