@@ -5,7 +5,7 @@ import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.nodes.gates.CustomGateNode;
 import dev.jasonlessenich.jlogic.objects.nodes.gates.concrete.AndGateNode;
 import dev.jasonlessenich.jlogic.objects.nodes.gates.concrete.NotGateNode;
-import dev.jasonlessenich.jlogic.objects.nodes.gates.loader.JGate;
+import dev.jasonlessenich.jlogic.objects.nodes.gates.custom.JGate;
 import dev.jasonlessenich.jlogic.objects.nodes.io.InputNode;
 import dev.jasonlessenich.jlogic.objects.nodes.io.OutputNode;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;

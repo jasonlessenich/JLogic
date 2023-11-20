@@ -1,4 +1,4 @@
-package dev.jasonlessenich.jlogic.objects.nodes.gates.loader;
+package dev.jasonlessenich.jlogic.objects.nodes.gates.custom;
 
 import dev.jasonlessenich.jlogic.objects.pins.naming_strategies.PinNamingStrategy;
 import lombok.Data;
