@@ -62,14 +62,12 @@ public abstract class ConnectableNode extends StackPane {
 
 	@Nonnull
 	public List<ConnectablePin> getInputPins() {
-		final List<ConnectablePin> pins = getPins().get(ConnectablePin.Type.INPUT);
-		return pins == null ? List.of() : pins;
+		return getPins().getOrDefault(ConnectablePin.Type.INPUT, List.of());
 	}
 
 	@Nonnull
 	public List<ConnectablePin> getOutputPins() {
-		final List<ConnectablePin> pins = getPins().get(ConnectablePin.Type.OUTPUT);
-		return pins == null ? List.of() : pins;
+		return getPins().getOrDefault(ConnectablePin.Type.OUTPUT, List.of());
 	}
 
 	public List<Connection> getSourceConnections() {
