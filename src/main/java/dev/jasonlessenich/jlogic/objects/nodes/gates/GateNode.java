@@ -20,8 +20,8 @@ import javax.annotation.Nonnull;
 public abstract class GateNode extends ConnectableNode implements Evaluable {
 	private final String symbol;
 
-	public GateNode(@Nonnull Point point, int inputCount, int outputCount, @Nonnull String symbol) {
-		super(point, PinLayoutStrategy.GATE, PinNamingStrategy.INDEX, inputCount, outputCount);
+	public GateNode(@Nonnull Point point, @Nonnull PinNamingStrategy namingStrategy, int inputCount, int outputCount, @Nonnull String symbol) {
+		super(point, PinLayoutStrategy.GATE, namingStrategy, inputCount, outputCount);
 		this.symbol = symbol;
 		((StackPane) getModel()).getChildren().add(buildSymbolText());
 	}

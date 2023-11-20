@@ -1,6 +1,7 @@
 {
   "name": "OR",
   "symbol": ">=1",
+  "namingStrategy": "ALPHABET",
   "tableDefinition": [
     {
       "inputCount": 2,
