@@ -2,6 +2,7 @@ package dev.jasonlessenich.jlogic.objects.nodes.gates;
 
 import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
+import dev.jasonlessenich.jlogic.objects.pins.naming.PinNamingStrategy;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.NodeUtils;
 import dev.jasonlessenich.jlogic.utils.Point;
@@ -19,7 +20,7 @@ public abstract class GateNode extends ConnectableNode implements Evaluable {
 	private final String symbol;
 
 	public GateNode(@Nonnull Point point, int inputCount, int outputCount, @Nonnull String symbol) {
-		super(point, new GatePinLayoutStrategy(), inputCount, outputCount);
+		super(point, new GatePinLayoutStrategy(PinNamingStrategy.INDEX), inputCount, outputCount);
 		this.symbol = symbol;
 		((StackPane) getModel()).getChildren().add(buildSymbolText());
 	}
