@@ -6,7 +6,6 @@ import dev.jasonlessenich.jlogic.utils.Point;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

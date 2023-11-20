@@ -3,7 +3,8 @@ package dev.jasonlessenich.jlogic.objects.nodes;
 import dev.jasonlessenich.jlogic.controller.MainController;
 import dev.jasonlessenich.jlogic.objects.Connection;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
-import dev.jasonlessenich.jlogic.objects.pins.PinLayoutStrategy;
+import dev.jasonlessenich.jlogic.objects.pins.layout_strategies.PinLayoutStrategy;
+import dev.jasonlessenich.jlogic.objects.pins.naming_strategies.PinNamingStrategy;
 import dev.jasonlessenich.jlogic.utils.Drag;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.layout.Region;
@@ -19,7 +20,9 @@ import java.util.Map;
 @Getter
 @Slf4j
 public abstract class ConnectableNode extends StackPane {
-	private final PinLayoutStrategy layout;
+	private final PinLayoutStrategy layoutStrategy;
+	private final PinNamingStrategy namingStrategy;
+
 	private final List<Connection> connections;
 	private final Map<ConnectablePin.Type, List<ConnectablePin>> pins;
 	private final int inputCount;
@@ -29,11 +32,13 @@ public abstract class ConnectableNode extends StackPane {
 
 	public ConnectableNode(
 			@Nonnull Point point,
-			@Nonnull PinLayoutStrategy layout,
+			@Nonnull PinLayoutStrategy layoutStrategy,
+			@Nonnull PinNamingStrategy namingStrategy,
 			int inputCount,
 			int outputCount
 	) {
-		this.layout = layout;
+		this.layoutStrategy = layoutStrategy;
+		this.namingStrategy = namingStrategy;
 		this.connections = new ArrayList<>();
 		this.inputCount = inputCount;
 		this.outputCount = outputCount;
@@ -52,7 +57,7 @@ public abstract class ConnectableNode extends StackPane {
 				.build();
 		this.model = buildModel();
 		getChildren().add(model);
-		this.pins = layout.layoutPins(this);
+		this.pins = layoutStrategy.layoutPins(this, namingStrategy);
 		pins.values().forEach(MainController.PINS::addAll);
 	}
 

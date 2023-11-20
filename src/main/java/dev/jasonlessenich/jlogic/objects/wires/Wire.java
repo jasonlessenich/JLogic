@@ -1,7 +1,6 @@
 package dev.jasonlessenich.jlogic.objects.wires;
 
 import dev.jasonlessenich.jlogic.controller.MainController;
-import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
@@ -15,7 +14,6 @@ import lombok.Getter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Map;
 import java.util.Optional;
 
 public class Wire extends Parent {

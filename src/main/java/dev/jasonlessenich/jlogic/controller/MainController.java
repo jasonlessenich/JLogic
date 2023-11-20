@@ -22,9 +22,7 @@ import javafx.scene.layout.AnchorPane;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MainController {
 	public static final List<ConnectablePin> PINS = new ArrayList<>();

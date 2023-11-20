@@ -2,7 +2,8 @@ package dev.jasonlessenich.jlogic.objects.nodes.gates;
 
 import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
-import dev.jasonlessenich.jlogic.objects.pins.naming.PinNamingStrategy;
+import dev.jasonlessenich.jlogic.objects.pins.layout_strategies.PinLayoutStrategy;
+import dev.jasonlessenich.jlogic.objects.pins.naming_strategies.PinNamingStrategy;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.NodeUtils;
 import dev.jasonlessenich.jlogic.utils.Point;
@@ -20,7 +21,7 @@ public abstract class GateNode extends ConnectableNode implements Evaluable {
 	private final String symbol;
 
 	public GateNode(@Nonnull Point point, int inputCount, int outputCount, @Nonnull String symbol) {
-		super(point, new GatePinLayoutStrategy(PinNamingStrategy.INDEX), inputCount, outputCount);
+		super(point, PinLayoutStrategy.GATE, PinNamingStrategy.INDEX, inputCount, outputCount);
 		this.symbol = symbol;
 		((StackPane) getModel()).getChildren().add(buildSymbolText());
 	}
@@ -40,7 +41,11 @@ public abstract class GateNode extends ConnectableNode implements Evaluable {
 	@Nonnull
 	private Text buildSymbolText() {
 		final Text text = new Text(getSymbol());
-		text.setStyle("-fx-font-weight: bold");
+		if (Math.max(getInputCount(), getOutputCount()) == 1) {
+			text.setStyle("-fx-font-weight: bold; -fx-font-size: 8");
+		} else {
+			text.setStyle("-fx-font-weight: bold");
+		}
 		return text;
 	}
 }

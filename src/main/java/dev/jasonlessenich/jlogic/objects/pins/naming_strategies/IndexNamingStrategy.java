@@ -1,6 +1,4 @@
-package dev.jasonlessenich.jlogic.objects.pins.naming;
-
-import javax.annotation.Nonnull;
+package dev.jasonlessenich.jlogic.objects.pins.naming_strategies;
 
 public class IndexNamingStrategy implements PinNamingStrategy {
 	protected IndexNamingStrategy() {
