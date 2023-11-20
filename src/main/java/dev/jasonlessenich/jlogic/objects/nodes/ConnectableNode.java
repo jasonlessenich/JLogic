@@ -1,5 +1,6 @@
 package dev.jasonlessenich.jlogic.objects.nodes;
 
+import dev.jasonlessenich.jlogic.controller.MainController;
 import dev.jasonlessenich.jlogic.objects.Connection;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.objects.pins.PinLayoutStrategy;
@@ -52,6 +53,7 @@ public abstract class ConnectableNode extends StackPane {
 		this.model = buildModel();
 		getChildren().add(model);
 		this.pins = layout.layoutPins(this);
+		pins.values().forEach(MainController.PINS::addAll);
 	}
 
 	public abstract Region buildModel();

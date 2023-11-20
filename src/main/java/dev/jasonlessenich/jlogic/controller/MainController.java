@@ -8,6 +8,7 @@ import dev.jasonlessenich.jlogic.objects.nodes.gates.concrete.NotGateNode;
 import dev.jasonlessenich.jlogic.objects.nodes.gates.loader.JGate;
 import dev.jasonlessenich.jlogic.objects.nodes.io.InputNode;
 import dev.jasonlessenich.jlogic.objects.nodes.io.OutputNode;
+import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.fxml.FXML;
@@ -20,11 +21,14 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainController {
 	public static final Map<Point, ConnectableNode> NODES = new HashMap<>();
+	public static final List<ConnectablePin> PINS = new ArrayList<>();
 
 	public static AnchorPane MAIN_PANE;
 

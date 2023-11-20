@@ -102,19 +102,9 @@ public class Wire extends Parent {
 	}
 
 	public Optional<ConnectablePin> checkConnection(Point to) {
-		ConnectablePin pin = null;
-		for (Map.Entry<Point, ConnectableNode> entries : MainController.NODES.entrySet()) {
-			final ConnectableNode n = entries.getValue();
-			if (pin != null) continue;
-			for (ConnectablePin p : n.getInputPins()) {
-				final Point pinPos = p.getPinPosition();
-				if (pinPos.getX() == to.getX() && pinPos.getY() == to.getY()) {
-					pin = p;
-					break;
-				}
-			}
-		}
-		return Optional.ofNullable(pin);
+		return MainController.PINS.stream()
+				.filter(p -> p.getPinPosition().equals(to))
+				.findFirst();
 	}
 
 	public void connect(@Nonnull ConnectablePin from, @Nonnull ConnectablePin to) {
