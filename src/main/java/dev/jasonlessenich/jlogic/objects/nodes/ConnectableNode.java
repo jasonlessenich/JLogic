@@ -5,15 +5,17 @@ import dev.jasonlessenich.jlogic.objects.Connection;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.objects.pins.layout_strategies.PinLayoutStrategy;
 import dev.jasonlessenich.jlogic.objects.pins.naming_strategies.PinNamingStrategy;
+import dev.jasonlessenich.jlogic.objects.wires.Wire;
 import dev.jasonlessenich.jlogic.utils.Drag;
 import dev.jasonlessenich.jlogic.utils.Point;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,8 +48,8 @@ public abstract class ConnectableNode extends StackPane {
 		this.drag = new Drag.Builder(this)
 				.setInitialPosition(point)
 				.setCanDrag(node -> !"ConnectablePinModel".equals(node.getId()))
+				.setContextMenu(buildDefaultContextMenu())
 				.setOnDrag(p -> {
-					// TODO: fix bug where wire is not updated when node is dragged slowly
 					for (ConnectablePin inputPin : getInputPins()) {
 						inputPin.getConnectedWire().ifPresent(w -> w.setEnd(inputPin.getPinPosition()));
 					}
@@ -84,5 +86,20 @@ public abstract class ConnectableNode extends StackPane {
 
 	public List<Connection> getTargetConnections() {
 		return connections.stream().filter(c -> c.getConnectionType() == Connection.Type.FORWARD).toList();
+	}
+
+	@Nonnull
+	private ContextMenu buildDefaultContextMenu() {
+		final ContextMenu contextMenu = new ContextMenu();
+		final MenuItem delete = new MenuItem("Delete Node");
+		delete.setOnAction(e -> {
+					getPins().values().stream()
+							.flatMap(List::stream)
+							.forEach(p -> p.getConnectedWire().ifPresent(Wire::disconnect));
+					MainController.MAIN_PANE.getChildren().remove(this);
+				}
+		);
+		contextMenu.getItems().add(delete);
+		return contextMenu;
 	}
 }

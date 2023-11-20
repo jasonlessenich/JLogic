@@ -125,6 +125,16 @@ public class Wire extends Parent {
 		);
 	}
 
+	public void disconnect() {
+		if (startPin != null) startPin.setConnectedWire(null);
+		if (endPin != null) endPin.setConnectedWire(null);
+		startPin.getNode().getConnections().removeIf(c -> c.getConnectionTo() == endPin);
+		endPin.getNode().getConnections().removeIf(c -> c.getConnectionTo() == startPin);
+		MainController.MAIN_PANE.getChildren().remove(this);
+		log.info("Disconnected {} ConnectablePin ({}) from {} ConnectablePin ({})",
+				startPin.getType(), startPin.getNode(), endPin.getType(), endPin.getNode());
+	}
+
 	private @Nonnull Circle buildWirePin(@Nonnull Point p, boolean isStart) {
 		final Circle circle = new Circle();
 		circle.setCenterX(p.getX());
@@ -171,13 +181,7 @@ public class Wire extends Parent {
 	private ContextMenu buildDefaultContextMenu() {
 		final ContextMenu contextMenu = new ContextMenu();
 		final MenuItem deleteItem = new MenuItem("Delete Wire");
-		deleteItem.setOnAction(e -> {
-			if (startPin != null)
-				startPin.setConnectedWire(null);
-			if (endPin != null)
-				endPin.setConnectedWire(null);
-			MainController.MAIN_PANE.getChildren().remove(this);
-		});
+		deleteItem.setOnAction(e -> disconnect());
 		contextMenu.getItems().addAll(deleteItem);
 		return contextMenu;
 	}
