@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MainController {
-	public static final Map<Point, ConnectableNode> NODES = new HashMap<>();
 	public static final List<ConnectablePin> PINS = new ArrayList<>();
 
 	public static AnchorPane MAIN_PANE;
@@ -58,7 +57,6 @@ public class MainController {
 	}
 
 	private void addConnectable(@Nonnull ConnectableNode node) {
-		NODES.put(node.getDrag().getPosition(), node);
 		mainPane.getChildren().add(node);
 	}
 
