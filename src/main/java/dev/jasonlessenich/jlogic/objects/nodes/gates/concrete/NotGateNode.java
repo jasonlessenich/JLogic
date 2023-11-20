@@ -13,8 +13,6 @@ public class NotGateNode extends GateNode {
 
 	@Override
 	public boolean evaluate(@Nonnull List<Boolean> inputs) {
-		if (inputs.size() != 1)
-			throw new IllegalArgumentException("Not Gate can only have one input!");
 		return !inputs.get(0);
 	}
 }

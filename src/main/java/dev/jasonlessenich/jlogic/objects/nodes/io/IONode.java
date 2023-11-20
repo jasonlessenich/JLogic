@@ -8,8 +8,8 @@ import lombok.Getter;
 
 import javax.annotation.Nonnull;
 
+@Getter
 public abstract class IONode extends ConnectableNode {
-	@Getter
 	private boolean activated = false;
 
 	public IONode(@Nonnull Point point, int inputCount, int outputCount) {
