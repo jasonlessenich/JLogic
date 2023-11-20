@@ -83,8 +83,8 @@ public class Drag {
 			position.setX(node.getLayoutX());
 			position.setY(node.getLayoutY());
 			if (step != null) newLayout = newLayout.stepped(step);
-			if (onDrag != null) onDrag.accept(newLayout);
 			node.relocate(newLayout.getX(), newLayout.getY());
+			if (onDrag != null) onDrag.accept(newLayout);
 		});
 	}
 

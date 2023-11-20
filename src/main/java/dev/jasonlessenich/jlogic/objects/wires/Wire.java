@@ -1,6 +1,7 @@
 package dev.jasonlessenich.jlogic.objects.wires;
 
 import dev.jasonlessenich.jlogic.controller.MainController;
+import dev.jasonlessenich.jlogic.objects.Connection;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
@@ -11,11 +12,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
+@Slf4j
 public class Wire extends Parent {
 	private static final Color PIN_FILL = Color.WHITE;
 
@@ -99,21 +102,27 @@ public class Wire extends Parent {
 		line.setStroke(activated ? Color.LIMEGREEN : Color.BLACK);
 	}
 
-	public Optional<ConnectablePin> checkConnection(Point to) {
+	public Optional<ConnectablePin> isPinAtPoint(Point to) {
 		return MainController.PINS.stream()
 				.filter(p -> p.getPinPosition().equals(to))
 				.findFirst();
 	}
 
 	public void connect(@Nonnull ConnectablePin from, @Nonnull ConnectablePin to) {
+		if (!from.canConnectTo(to)) return;
 		// remove end pin
 		getChildren().removeIf(n -> n == startCircle || n == endCircle);
 		setStart(from.getPinPosition());
 		setEnd(to.getPinPosition());
 		from.setConnectedWire(this);
 		to.setConnectedWire(this);
+		from.getNode().getConnections().add(new Connection(from, to, Connection.Type.FORWARD));
+		to.getNode().getConnections().add(new Connection(to, from, Connection.Type.BACKWARD));
 		this.startPin = from;
 		this.endPin = to;
+		log.info("Connected {} ConnectablePin ({}) to {} ConnectablePin ({})",
+				from.getType(), from.getNode(), to.getType(), to.getNode()
+		);
 	}
 
 	private @Nonnull Circle buildWirePin(@Nonnull Point p, boolean isStart) {
@@ -141,7 +150,7 @@ public class Wire extends Parent {
 				line.setEndX(newPos.getX());
 				line.setEndY(newPos.getY());
 			}
-			final Optional<ConnectablePin> pinOptional = checkConnection(newPos);
+			final Optional<ConnectablePin> pinOptional = isPinAtPoint(newPos);
 			pinOptional.ifPresent(pin -> {
 				if (isStart && endPin != null) connect(pin, endPin);
 				if (!isStart && startPin != null) connect(startPin, pin);
