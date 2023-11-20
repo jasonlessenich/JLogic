@@ -1,10 +1,10 @@
 package dev.jasonlessenich.jlogic.objects.pins;
 
 import dev.jasonlessenich.jlogic.controller.MainController;
-import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.Connection;
-import dev.jasonlessenich.jlogic.utils.Constants;
+import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.wires.Wire;
+import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.Parent;
 import javafx.scene.paint.Color;
@@ -14,7 +14,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 public class ConnectablePin extends Parent {
@@ -26,6 +28,9 @@ public class ConnectablePin extends Parent {
 	@Getter
 	@Setter
 	private Point displacement;
+
+	@Nullable
+	private Wire wire;
 
 	private final Circle model;
 
@@ -41,18 +46,31 @@ public class ConnectablePin extends Parent {
 		setOnMouseEntered(e -> model.setFill(HOVER_COLOR));
 		setOnMouseExited(e -> model.setFill(DEFAULT_COLOR));
 		setOnMouseDragged(me -> {
-			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof Wire);
-			final Point from = getPosition();
+			// clear old wire
+			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof Wire && n == this.wire);
+			final Point from = getPinPosition();
 			final Point to = Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE);
-			final Wire wire = new Wire(from, to, false, true);
+			final Wire wire = new Wire(from, to, this, null);
+			// final Optional<ConnectablePin> pinOptional = wire.checkConnection(node, to);
+			// pinOptional.ifPresent(wire::connect);
+			// add new wire at mouse pos
+			this.wire = wire;
 			MainController.MAIN_PANE.getChildren().add(wire);
 		});
 	}
 
-	public Point getPosition() {
+	public Point getPinPosition() {
 		return node.getPosition()
 				.addX(displacement.getX() + node.getModel().getMaxWidth() / 2)
 				.addY(displacement.getY() + node.getModel().getMaxHeight() / 2);
+	}
+
+	public void setConnectedWire(@Nullable Wire wire) {
+		this.wire = wire;
+	}
+
+	public Optional<Wire> getConnectedWire() {
+		return Optional.ofNullable(wire);
 	}
 
 	public boolean canConnectTo(@Nonnull ConnectablePin pin) {

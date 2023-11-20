@@ -1,8 +1,6 @@
 package dev.jasonlessenich.jlogic.utils;
 
-import javafx.scene.Parent;
 import javafx.scene.layout.Region;
-import org.w3c.dom.Node;
 
 import javax.annotation.Nonnull;
 

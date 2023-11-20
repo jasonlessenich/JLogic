@@ -8,7 +8,6 @@ import dev.jasonlessenich.jlogic.objects.nodes.gates.concrete.NotGateNode;
 import dev.jasonlessenich.jlogic.objects.nodes.gates.loader.JGate;
 import dev.jasonlessenich.jlogic.objects.nodes.io.InputNode;
 import dev.jasonlessenich.jlogic.objects.nodes.io.OutputNode;
-import dev.jasonlessenich.jlogic.objects.wires.Wire;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.fxml.FXML;
@@ -19,18 +18,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
-import javafx.util.Pair;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 public class MainController {
 	public static final Map<Point, ConnectableNode> NODES = new HashMap<>();
-	public static final Map<Pair<Point, Point>, Wire> WIRES = new HashMap<>();
 
 	public static AnchorPane MAIN_PANE;
 
@@ -59,11 +53,6 @@ public class MainController {
 		});
 	}
 
-	public static void addWire(Wire wire) {
-		WIRES.put(new Pair<>(wire.getStart(), wire.getEnd()), wire);
-		MAIN_PANE.getChildren().add(wire);
-	}
-
 	private void addConnectable(@Nonnull ConnectableNode node) {
 		NODES.put(node.getDrag().getPosition(), node);
 		mainPane.getChildren().add(node);
@@ -79,8 +68,6 @@ public class MainController {
 		addInput.setOnAction(actionEvent -> addConnectable(new InputNode(lastContextMenuPoint)));
 		final MenuItem addOutput = new MenuItem("Add Output");
 		addOutput.setOnAction(actionEvent -> addConnectable(new OutputNode(lastContextMenuPoint)));
-		final MenuItem addWire = new MenuItem("Add Wire");
-		addWire.setOnAction(actionEvent -> addWire(new Wire(lastContextMenuPoint, lastContextMenuPoint.addX(Constants.GRID_STEP_SIZE * 3))));
 		final Menu addGate = new Menu("Add Gate...");
 		final MenuItem addAndGate = new MenuItem("AND Gate");
 		addAndGate.setOnAction(e -> addConnectable(new AndGateNode(lastContextMenuPoint)));
@@ -98,7 +85,7 @@ public class MainController {
 			addGate.getItems().add(gateMenu);
 		}
 		final ContextMenu contextMenu = new ContextMenu();
-		contextMenu.getItems().addAll(simulationMode, new SeparatorMenuItem(), addInput, addOutput, addWire, new SeparatorMenuItem(), addGate);
+		contextMenu.getItems().addAll(simulationMode, new SeparatorMenuItem(), addInput, addOutput, new SeparatorMenuItem(), addGate);
 		return contextMenu;
 	}
 }

@@ -5,9 +5,6 @@ import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.NodeUtils;
 import dev.jasonlessenich.jlogic.utils.Point;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -16,8 +13,6 @@ import javafx.scene.text.Text;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.Set;
 
 @Getter
 public abstract class GateNode extends ConnectableNode implements Evaluable {

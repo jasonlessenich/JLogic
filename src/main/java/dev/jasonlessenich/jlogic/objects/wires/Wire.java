@@ -1,9 +1,10 @@
 package dev.jasonlessenich.jlogic.objects.wires;
 
 import dev.jasonlessenich.jlogic.controller.MainController;
+import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
+import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
-import dev.jasonlessenich.jlogic.utils.PointUtils;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -14,41 +15,57 @@ import lombok.Getter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Map;
 import java.util.Optional;
 
 public class Wire extends Parent {
 	private static final Color PIN_FILL = Color.WHITE;
-	private static final Color PIN_CONNECTED = Color.LIGHTBLUE;
 
 	@Nonnull
 	@Getter
-	private final Point start;
+	private Point start;
 	@Nonnull
 	@Getter
-	private final Point end;
+	private Point end;
+
+	@Nullable
+	private ConnectablePin startPin;
+	@Nullable
+	private ConnectablePin endPin;
+
+	/* MODEL */
 	private final Line line;
 	@Nullable
-	private final Circle startPin;
+	private final Circle startCircle;
 	@Nullable
-	private final Circle endPin;
+	private final Circle endCircle;
 
-	public Wire(@Nonnull Point start, @Nonnull Point end) {
-		this(start, end, true, true);
-	}
-
-	public Wire(@Nonnull Point start, @Nonnull Point end, boolean hasStart, boolean hasEnd) {
+	public Wire(
+			@Nonnull Point start,
+			@Nonnull Point end,
+			@Nullable ConnectablePin startPin,
+			@Nullable ConnectablePin endPin
+	) {
 		setId("Wire");
 		this.start = start;
 		this.end = end;
 		this.line = buildLine(start, end);
 		getChildren().add(line);
-		this.startPin = hasStart ? buildWirePin(start, true) : null;
-		if (startPin != null) {
-			getChildren().add(startPin);
+		// build start pin
+		this.startPin = startPin;
+		if (startPin == null) {
+			this.startCircle = buildWirePin(start, true);
+			getChildren().add(startCircle);
+		} else {
+			this.startCircle = null;
 		}
-		this.endPin = hasEnd ? buildWirePin(end, false) : null;
-		if (endPin != null) {
-			getChildren().add(endPin);
+		// build end pin
+		this.endPin = endPin;
+		if (endPin == null) {
+			this.endCircle = buildWirePin(end, false);
+			getChildren().add(endCircle);
+		} else {
+			this.endCircle = null;
 		}
 		final ContextMenu contextMenu = buildDefaultContextMenu();
 		setOnMousePressed(me -> {
@@ -60,16 +77,55 @@ public class Wire extends Parent {
 		});
 	}
 
+	public void setStart(@Nonnull Point start) {
+		this.start = start;
+		if (startCircle != null) {
+			startCircle.setCenterX(start.getX());
+			startCircle.setCenterY(start.getY());
+		}
+		line.setStartX(start.getX());
+		line.setStartY(start.getY());
+	}
+
+	public void setEnd(@Nonnull Point end) {
+		this.end = end;
+		if (endCircle != null) {
+			endCircle.setCenterX(end.getX());
+			endCircle.setCenterY(end.getY());
+		}
+		line.setEndX(end.getX());
+		line.setEndY(end.getY());
+	}
+
 	public void setActivated(boolean activated) {
 		line.setStroke(activated ? Color.LIMEGREEN : Color.BLACK);
 	}
 
-	public void removeStartPin() {
-		getChildren().removeIf(n -> n == startPin);
+	public Optional<ConnectablePin> checkConnection(Point to) {
+		ConnectablePin pin = null;
+		for (Map.Entry<Point, ConnectableNode> entries : MainController.NODES.entrySet()) {
+			final ConnectableNode n = entries.getValue();
+			if (pin != null) continue;
+			for (ConnectablePin p : n.getInputPins()) {
+				final Point pinPos = p.getPinPosition();
+				if (pinPos.getX() == to.getX() && pinPos.getY() == to.getY()) {
+					pin = p;
+					break;
+				}
+			}
+		}
+		return Optional.ofNullable(pin);
 	}
 
-	public void removeEndPin() {
-		getChildren().removeIf(n -> n == endPin);
+	public void connect(@Nonnull ConnectablePin from, @Nonnull ConnectablePin to) {
+		// remove end pin
+		getChildren().removeIf(n -> n == startCircle || n == endCircle);
+		setStart(from.getPinPosition());
+		setEnd(to.getPinPosition());
+		from.setConnectedWire(this);
+		to.setConnectedWire(this);
+		this.startPin = from;
+		this.endPin = to;
 	}
 
 	private @Nonnull Circle buildWirePin(@Nonnull Point p, boolean isStart) {
@@ -87,19 +143,21 @@ public class Wire extends Parent {
 			dragDelta.setY(me.getSceneY());
 		});
 		circle.setOnMouseDragged(me -> {
-			final double newX = PointUtils.step(me.getSceneX(), Constants.GRID_STEP_SIZE);
-			final double newY = PointUtils.step(me.getSceneY(), Constants.GRID_STEP_SIZE);
-			circle.setCenterX(newX);
-			circle.setCenterY(newY);
+			final Point newPos = Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE);
+			circle.setCenterX(newPos.getX());
+			circle.setCenterY(newPos.getY());
 			if (isStart) {
-				line.setStartX(newX);
-				line.setStartY(newY);
+				line.setStartX(newPos.getX());
+				line.setStartY(newPos.getY());
 			} else {
-				line.setEndX(newX);
-				line.setEndY(newY);
+				line.setEndX(newPos.getX());
+				line.setEndY(newPos.getY());
 			}
-			// final Optional<Wire> wireOptional = intersectsWire(Point.of(newX, newY));
-			// circle.setFill(wireOptional.isPresent() ? PIN_CONNECTED : PIN_FILL);
+			final Optional<ConnectablePin> pinOptional = checkConnection(newPos);
+			pinOptional.ifPresent(pin -> {
+				if (isStart && endPin != null) connect(pin, endPin);
+				if (!isStart && startPin != null) connect(startPin, pin);
+			});
 		});
 		return circle;
 	}
@@ -116,7 +174,13 @@ public class Wire extends Parent {
 	private ContextMenu buildDefaultContextMenu() {
 		final ContextMenu contextMenu = new ContextMenu();
 		final MenuItem deleteItem = new MenuItem("Delete Wire");
-		deleteItem.setOnAction(actionEvent -> MainController.MAIN_PANE.getChildren().remove(this));
+		deleteItem.setOnAction(e -> {
+			if (startPin != null)
+				startPin.setConnectedWire(null);
+			if (endPin != null)
+				endPin.setConnectedWire(null);
+			MainController.MAIN_PANE.getChildren().remove(this);
+		});
 		contextMenu.getItems().addAll(deleteItem);
 		return contextMenu;
 	}

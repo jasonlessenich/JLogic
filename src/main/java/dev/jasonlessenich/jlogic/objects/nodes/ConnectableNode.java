@@ -39,6 +39,15 @@ public abstract class ConnectableNode extends StackPane {
 		this.drag = new Drag.Builder(this)
 				.setInitialPosition(point)
 				.setCanDrag(node -> !"ConnectablePinModel".equals(node.getId()))
+				.setOnDrag(p -> {
+					// TODO: fix bug where wire is not updated when node is dragged slowly
+					for (ConnectablePin inputPin : getInputPins()) {
+						inputPin.getConnectedWire().ifPresent(w -> w.setEnd(inputPin.getPinPosition()));
+					}
+					for (ConnectablePin outputPin : getOutputPins()) {
+						outputPin.getConnectedWire().ifPresent(w -> w.setStart(outputPin.getPinPosition()));
+					}
+				})
 				.build();
 		this.model = buildModel();
 		getChildren().add(model);
@@ -51,12 +60,16 @@ public abstract class ConnectableNode extends StackPane {
 		return Point.of(getLayoutX(), getLayoutY());
 	}
 
+	@Nonnull
 	public List<ConnectablePin> getInputPins() {
-		return getPins().get(ConnectablePin.Type.INPUT);
+		final List<ConnectablePin> pins = getPins().get(ConnectablePin.Type.INPUT);
+		return pins == null ? List.of() : pins;
 	}
 
+	@Nonnull
 	public List<ConnectablePin> getOutputPins() {
-		return getPins().get(ConnectablePin.Type.OUTPUT);
+		final List<ConnectablePin> pins = getPins().get(ConnectablePin.Type.OUTPUT);
+		return pins == null ? List.of() : pins;
 	}
 
 	public List<Connection> getSourceConnections() {
