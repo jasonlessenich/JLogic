@@ -16,6 +16,7 @@ public class JGate {
 	private String name;
 	private String symbol;
 	private String namingStrategy = "INDEX";
+	private List<String> customNames = List.of();
 	private List<Table> tableDefinition;
 
 	public PinNamingStrategy getNamingStrategy() {

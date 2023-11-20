@@ -2,6 +2,7 @@ package dev.jasonlessenich.jlogic.objects.nodes.gates;
 
 import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
 import dev.jasonlessenich.jlogic.objects.nodes.gates.custom.JGate;
+import dev.jasonlessenich.jlogic.objects.pins.naming_strategies.CustomNamingStrategy;
 import dev.jasonlessenich.jlogic.utils.Point;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,7 +15,7 @@ public class CustomGateNode extends GateNode implements Evaluable {
 	private final JGate.Table table;
 
 	public CustomGateNode(@Nonnull Point point, @Nonnull JGate gate, @Nonnull JGate.Table table) {
-		super(point, gate.getNamingStrategy(), table.getInputCount(), table.getOutputCount(), gate.getSymbol());
+		super(point, new CustomNamingStrategy(gate.getCustomNames(), gate.getNamingStrategy()), table.getInputCount(), table.getOutputCount(), gate.getSymbol());
 		this.table = table;
 	}
 
