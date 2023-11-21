@@ -14,6 +14,6 @@ public class NotGateNode extends GateNode {
 
 	@Override
 	public boolean evaluate(@Nonnull List<Boolean> inputs) {
-		return !inputs.get(0);
+		return inputs.isEmpty() || !inputs.get(0);
 	}
 }

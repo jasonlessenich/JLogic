@@ -2,6 +2,7 @@ package dev.jasonlessenich.jlogic.objects.wires;
 
 import dev.jasonlessenich.jlogic.controller.MainController;
 import dev.jasonlessenich.jlogic.objects.Connection;
+import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
@@ -30,8 +31,10 @@ public class Wire extends Parent {
 	private Point end;
 
 	@Nullable
+	@Getter
 	private ConnectablePin startPin;
 	@Nullable
+	@Getter
 	private ConnectablePin endPin;
 
 	/* MODEL */
@@ -126,13 +129,17 @@ public class Wire extends Parent {
 	}
 
 	public void disconnect() {
-		if (startPin != null) startPin.setConnectedWire(null);
-		if (endPin != null) endPin.setConnectedWire(null);
-		startPin.getNode().getConnections().removeIf(c -> c.getConnectionTo() == endPin);
-		endPin.getNode().getConnections().removeIf(c -> c.getConnectionTo() == startPin);
+		if (startPin != null) {
+			startPin.setConnectedWire(null);
+			startPin.getNode().getConnections().removeIf(c -> c.getConnectionTo() == endPin);
+			log.info("Disconnected {} ConnectablePin (start, {})", startPin.getType(), startPin.getNode());
+		}
+		if (endPin != null) {
+			endPin.setConnectedWire(null);
+			endPin.getNode().getConnections().removeIf(c -> c.getConnectionTo() == startPin);
+			log.info("Disconnected {} ConnectablePin (end, {})", startPin.getType(), startPin.getNode());
+		}
 		MainController.MAIN_PANE.getChildren().remove(this);
-		log.info("Disconnected {} ConnectablePin ({}) from {} ConnectablePin ({})",
-				startPin.getType(), startPin.getNode(), endPin.getType(), endPin.getNode());
 	}
 
 	private @Nonnull Circle buildWirePin(@Nonnull Point p, boolean isStart) {
