@@ -39,9 +39,6 @@ public class OutputNode extends IONode implements Evaluable {
 
 	@Override
 	public boolean evaluate(@Nonnull List<Boolean> inputs) {
-		for (boolean input : inputs) {
-			if (input) return true;
-		}
-		return false;
+		return !inputs.isEmpty() && inputs.get(0);
 	}
 }

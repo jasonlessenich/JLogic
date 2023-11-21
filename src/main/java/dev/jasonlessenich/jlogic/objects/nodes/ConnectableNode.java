@@ -12,19 +12,25 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Getter
 @Slf4j
 public abstract class ConnectableNode extends StackPane {
 	private final PinLayoutStrategy layoutStrategy;
 	private final PinNamingStrategy namingStrategy;
+
+	private final NodeState state;
 
 	private final List<Connection> connections;
 	private final Map<ConnectablePin.Type, List<ConnectablePin>> pins;
@@ -42,6 +48,7 @@ public abstract class ConnectableNode extends StackPane {
 	) {
 		this.layoutStrategy = layoutStrategy;
 		this.namingStrategy = namingStrategy;
+		this.state = new NodeState(this::handleStateChange);
 		this.connections = new ArrayList<>();
 		this.inputCount = inputCount;
 		this.outputCount = outputCount;
@@ -70,6 +77,14 @@ public abstract class ConnectableNode extends StackPane {
 		return Point.of(getLayoutX(), getLayoutY());
 	}
 
+	public boolean isActivated() {
+		return getState().isActive();
+	}
+
+	public void setActivated(boolean activated) {
+		getState().setActive(activated);
+	}
+
 	@Nonnull
 	public List<ConnectablePin> getInputPins() {
 		return getPins().getOrDefault(ConnectablePin.Type.INPUT, List.of());
@@ -86,6 +101,24 @@ public abstract class ConnectableNode extends StackPane {
 
 	public List<Connection> getTargetConnections() {
 		return connections.stream().filter(c -> c.getConnectionType() == Connection.Type.FORWARD).toList();
+	}
+
+	private void handleStateChange(boolean state) {
+		for (Connection con : getTargetConnections()) {
+			final ConnectableNode node = con.getConnectionTo().getNode();
+			if (node instanceof Evaluable eval) {
+				final List<Boolean> booleans = node.getSourceConnections()
+						.stream()
+						.map(c -> c.getConnectionTo().getNode().isActivated())
+						.toList();
+				final boolean result = eval.evaluate(booleans);
+				log.info("Notified {} of state change with input: {} ({} -> {})", node, booleans, node.isActivated(), result);
+				node.setActivated(result);
+			}
+		}
+		for (ConnectablePin pin : getOutputPins()) {
+			pin.getConnectedWire().ifPresent(w -> w.setActivated(state));
+		}
 	}
 
 	@Nonnull
