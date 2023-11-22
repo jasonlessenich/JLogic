@@ -15,14 +15,24 @@ public class JGate {
 
 	private String name;
 	private String symbol;
-	private String namingStrategy = "INDEX";
-	private List<String> customNames = List.of();
+	private String inputNamingStrategy = "INDEX";
+	private String outputNamingStrategy = "INDEX";
+	private List<String> inputNames = List.of();
+	private List<String> outputNames = List.of();
 	private List<Table> tableDefinition;
 
-	public PinNamingStrategy getNamingStrategy() {
-		if (!STRATEGY_MAP.containsKey(namingStrategy))
-			throw new IllegalArgumentException("No naming strategy for " + namingStrategy);
-		return STRATEGY_MAP.get(namingStrategy);
+	public PinNamingStrategy getInputNamingStrategy() {
+		return getNamingStrategy(inputNamingStrategy);
+	}
+
+	public PinNamingStrategy getOutputNamingStrategy() {
+		return getNamingStrategy(outputNamingStrategy);
+	}
+
+	private PinNamingStrategy getNamingStrategy(String strategy) {
+		if (!STRATEGY_MAP.containsKey(inputNamingStrategy))
+			throw new IllegalArgumentException("No naming strategy for " + inputNamingStrategy);
+		return STRATEGY_MAP.get(inputNamingStrategy);
 	}
 
 	@Data

@@ -20,14 +20,15 @@ public class GateLayoutStrategy implements PinLayoutStrategy {
 	@Override
 	public Map<ConnectablePin.Type, List<ConnectablePin>> layoutPins(
 			@Nonnull ConnectableNode node,
-			@Nonnull PinNamingStrategy namingStrategy
+			@Nonnull PinNamingStrategy inputNamingStrategy,
+			@Nonnull PinNamingStrategy outputNamingStrategy
 	) {
 		this.removePins(node);
 		final Map<ConnectablePin.Type, List<ConnectablePin>> pinMap = new HashMap<>();
 		if (node.getInputCount() > 0)
-			pinMap.put(ConnectablePin.Type.INPUT, layoutNodePins(node, namingStrategy, node.getInputCount(), true));
+			pinMap.put(ConnectablePin.Type.INPUT, layoutNodePins(node, inputNamingStrategy, node.getInputCount(), true));
 		if (node.getOutputCount() > 0)
-			pinMap.put(ConnectablePin.Type.OUTPUT, layoutNodePins(node, namingStrategy, node.getOutputCount(), false));
+			pinMap.put(ConnectablePin.Type.OUTPUT, layoutNodePins(node, outputNamingStrategy, node.getOutputCount(), false));
 		return pinMap;
 	}
 

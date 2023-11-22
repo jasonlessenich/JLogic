@@ -9,7 +9,7 @@ import java.util.List;
 
 public class NotGateNode extends GateNode {
 	public NotGateNode(@Nonnull Point point) {
-		super(point, PinNamingStrategy.INDEX, 1, 1, "-1");
+		super(point, PinNamingStrategy.INDEX, PinNamingStrategy.INDEX, 1, 1, "-1");
 	}
 
 	@Override

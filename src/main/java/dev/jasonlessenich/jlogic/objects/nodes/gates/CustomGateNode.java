@@ -15,7 +15,14 @@ public class CustomGateNode extends GateNode implements Evaluable {
 	private final JGate.Table table;
 
 	public CustomGateNode(@Nonnull Point point, @Nonnull JGate gate, @Nonnull JGate.Table table) {
-		super(point, new CustomNamingStrategy(gate.getCustomNames(), gate.getNamingStrategy()), table.getInputCount(), table.getOutputCount(), gate.getSymbol());
+		super(
+				point,
+				new CustomNamingStrategy(gate.getInputNames(), gate.getInputNamingStrategy()),
+				new CustomNamingStrategy(gate.getOutputNames(), gate.getOutputNamingStrategy()),
+				table.getInputCount(),
+				table.getOutputCount(),
+				gate.getSymbol()
+		);
 		this.table = table;
 	}
 

@@ -12,23 +12,20 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 @Getter
 @Slf4j
 public abstract class ConnectableNode extends StackPane {
 	private final PinLayoutStrategy layoutStrategy;
-	private final PinNamingStrategy namingStrategy;
+	private final PinNamingStrategy inputNamingStrategy;
+	private final PinNamingStrategy outputNamingStrategy;
 
 	private final NodeState state;
 
@@ -42,12 +39,14 @@ public abstract class ConnectableNode extends StackPane {
 	public ConnectableNode(
 			@Nonnull Point point,
 			@Nonnull PinLayoutStrategy layoutStrategy,
-			@Nonnull PinNamingStrategy namingStrategy,
+			@Nonnull PinNamingStrategy inputNamingStrategy,
+			@Nonnull PinNamingStrategy outputNamingStrategy,
 			int inputCount,
 			int outputCount
 	) {
 		this.layoutStrategy = layoutStrategy;
-		this.namingStrategy = namingStrategy;
+		this.inputNamingStrategy = inputNamingStrategy;
+		this.outputNamingStrategy = outputNamingStrategy;
 		this.state = new NodeState(this::handleStateChange);
 		this.connections = new ArrayList<>();
 		this.inputCount = inputCount;
@@ -67,7 +66,7 @@ public abstract class ConnectableNode extends StackPane {
 				.build();
 		this.model = buildModel();
 		getChildren().add(model);
-		this.pins = layoutStrategy.layoutPins(this, namingStrategy);
+		this.pins = layoutStrategy.layoutPins(this, inputNamingStrategy, outputNamingStrategy);
 		pins.values().forEach(MainController.PINS::addAll);
 	}
 

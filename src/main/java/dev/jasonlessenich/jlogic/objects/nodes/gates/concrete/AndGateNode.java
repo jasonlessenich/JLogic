@@ -9,7 +9,7 @@ import java.util.List;
 
 public class AndGateNode extends GateNode {
 	public AndGateNode(@Nonnull Point point) {
-		super(point, PinNamingStrategy.INDEX, 2, 1, "&");
+		super(point, PinNamingStrategy.INDEX, PinNamingStrategy.INDEX, 2, 1, "&");
 	}
 
 	@Override

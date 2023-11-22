@@ -13,7 +13,7 @@ public interface PinLayoutStrategy {
 	PinLayoutStrategy GATE = new GateLayoutStrategy();
 	PinLayoutStrategy IO = new IOLayoutStrategy();
 
-	Map<ConnectablePin.Type, List<ConnectablePin>> layoutPins(ConnectableNode node, PinNamingStrategy namingStrategy);
+	Map<ConnectablePin.Type, List<ConnectablePin>> layoutPins(ConnectableNode node, PinNamingStrategy inputNamingStrategy, PinNamingStrategy outputNamingStrategy);
 
 	default void removePins(@Nonnull ConnectableNode node) {
 		node.getChildren().removeIf(n -> n instanceof ConnectablePin);

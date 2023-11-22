@@ -2,6 +2,7 @@ package dev.jasonlessenich.jlogic.objects.nodes.gates.custom;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dev.jasonlessenich.jlogic.objects.pins.naming_strategies.PinNamingStrategy;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,6 +34,16 @@ public class JGateManager {
 					if (Files.isDirectory(path) || !path.toFile().getName().endsWith(".jgate")) continue;
 					try (BufferedReader reader = Files.newBufferedReader(path)) {
 						final JGate gate = gson.fromJson(reader, JGate.class);
+						// get naming strategies to make sure they are valid
+						gate.getInputNamingStrategy();
+						gate.getOutputNamingStrategy();
+						for (JGate.Table table : gate.getTableDefinition()) {
+							if (table.getMap().size() != Math.pow(2, table.getInputCount())) {
+								throw new IllegalArgumentException(
+										"%s: Table map count does not match input count! Expected: %d, Got: %d"
+												.formatted(path, (int) Math.pow(2, table.getInputCount()), table.getMap().size()));
+							}
+						}
 						gates.add(gate);
 						log.info("Loaded gate: {}, ({})", gate.getName(), path);
 					}
