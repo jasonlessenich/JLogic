@@ -34,7 +34,7 @@ public class JGateManager {
 					try (BufferedReader reader = Files.newBufferedReader(path)) {
 						final JGate gate = gson.fromJson(reader, JGate.class);
 						gates.add(gate);
-						log.info("Loaded gate: " + gate.getName());
+						log.info("Loaded gate: {}, ({})", gate.getName(), path);
 					}
 				}
 			}
