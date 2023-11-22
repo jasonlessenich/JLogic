@@ -86,7 +86,7 @@ public class ConnectablePin extends Parent {
 	public boolean canConnectTo(@Nonnull ConnectablePin pin) {
 		return node.getConnections().stream().noneMatch(c -> Objects.equals(c, new Connection(this, pin, Connection.Type.FORWARD))) &&
 				(node.getTargetConnections().size() < node.getOutputCount()) &&
-				(node.getSourceConnections().size() < pin.getNode().getInputCount());
+				(pin.getNode().getSourceConnections().size() < pin.getNode().getInputCount());
 	}
 
 	private @Nonnull Circle buildModel() {
