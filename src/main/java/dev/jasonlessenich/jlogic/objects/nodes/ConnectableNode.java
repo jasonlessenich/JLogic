@@ -17,8 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Getter
 @Slf4j
@@ -47,7 +49,7 @@ public abstract class ConnectableNode extends StackPane {
 		this.layoutStrategy = layoutStrategy;
 		this.inputNamingStrategy = inputNamingStrategy;
 		this.outputNamingStrategy = outputNamingStrategy;
-		this.state = new NodeState(this::handleStateChange);
+		this.state = new NodeState(outputCount, this::handleStateChange);
 		this.connections = new ArrayList<>();
 		this.inputCount = inputCount;
 		this.outputCount = outputCount;
@@ -70,18 +72,25 @@ public abstract class ConnectableNode extends StackPane {
 		pins.values().forEach(MainController.PINS::addAll);
 	}
 
+	public ConnectableNode(
+			@Nonnull Point point,
+			@Nonnull PinLayoutStrategy layoutStrategy,
+			@Nonnull PinNamingStrategy namingStrategy,
+			int inputCount,
+			int outputCount
+	) {
+		this(point, layoutStrategy, namingStrategy, namingStrategy, inputCount, outputCount);
+	}
+
+
 	public abstract Region buildModel();
 
 	public Point getPosition() {
 		return Point.of(getLayoutX(), getLayoutY());
 	}
 
-	public boolean isActivated() {
-		return getState().isActive();
-	}
-
-	public void setActivated(boolean activated) {
-		getState().setActive(activated);
+	public void setActive(boolean... active) {
+		getState().setActive(active);
 	}
 
 	@Nonnull
@@ -102,21 +111,27 @@ public abstract class ConnectableNode extends StackPane {
 		return connections.stream().filter(c -> c.getConnectionType() == Connection.Type.FORWARD).toList();
 	}
 
-	private void handleStateChange(boolean state) {
+	private void handleStateChange(boolean[] state) {
 		for (Connection con : getTargetConnections()) {
 			final ConnectableNode node = con.getConnectionTo().getNode();
 			if (node instanceof Evaluable eval) {
 				final List<Boolean> booleans = node.getSourceConnections()
 						.stream()
-						.map(c -> c.getConnectionTo().getNode().isActivated())
+						.map(c -> c.getConnectionTo().getNode().getState().getActive()[0])
 						.toList();
-				final boolean result = eval.evaluate(booleans);
-				log.info("Notified {} of state change with input: {} ({} -> {})", node, booleans, node.isActivated(), result);
-				node.setActivated(result);
+				final boolean[] result = eval.evaluate(booleans);
+				log.debug("Notified {} of state change with input: {} ({} -> {})", node, booleans, node.getState().getActive(), result);
+				// TODO: delay & add random delay (e.g. d-latch race condition)
+				System.out.println(Arrays.toString(result));
+				node.setActive(result);
 			}
 		}
-		for (ConnectablePin pin : getOutputPins()) {
-			pin.getConnectedWire().ifPresent(w -> w.setActivated(state));
+		final List<ConnectablePin> outputPins = getOutputPins();
+		for (int i = 0; i < outputPins.size(); i++) {
+			final Optional<Wire> pin = outputPins.get(i).getConnectedWire();
+			if (pin.isPresent()) {
+				pin.get().setActivated(state[i]);
+			}
 		}
 	}
 

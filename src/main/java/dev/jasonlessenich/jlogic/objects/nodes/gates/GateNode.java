@@ -21,8 +21,8 @@ public abstract class GateNode extends ConnectableNode implements Evaluable {
 	private final String symbol;
 
 	public GateNode(
-			@Nonnull Point point, @
-			Nonnull PinNamingStrategy inputNamingStrategy,
+			@Nonnull Point point,
+			@Nonnull PinNamingStrategy inputNamingStrategy,
 			@Nonnull PinNamingStrategy outputNamingStrategy,
 			int inputCount,
 			int outputCount,
@@ -31,6 +31,16 @@ public abstract class GateNode extends ConnectableNode implements Evaluable {
 		super(point, PinLayoutStrategy.GATE, inputNamingStrategy, outputNamingStrategy, inputCount, outputCount);
 		this.symbol = symbol;
 		((StackPane) getModel()).getChildren().add(buildSymbolText());
+	}
+
+	public GateNode(
+			@Nonnull Point point,
+			@Nonnull PinNamingStrategy namingStrategy,
+			int inputCount,
+			int outputCount,
+			@Nonnull String symbol
+	) {
+		this(point, namingStrategy, namingStrategy, inputCount, outputCount, symbol);
 	}
 
 	@Override

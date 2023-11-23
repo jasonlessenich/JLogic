@@ -7,11 +7,15 @@ import dev.jasonlessenich.jlogic.utils.Point;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class CustomGateNode extends GateNode implements Evaluable {
+	@Nonnull
+	private final JGate gate;
+	@Nonnull
 	private final JGate.Table table;
 
 	public CustomGateNode(@Nonnull Point point, @Nonnull JGate gate, @Nonnull JGate.Table table) {
@@ -23,17 +27,18 @@ public class CustomGateNode extends GateNode implements Evaluable {
 				table.getOutputCount(),
 				gate.getSymbol()
 		);
+		this.gate = gate;
 		this.table = table;
 	}
 
 	@Override
-	public boolean evaluate(@Nonnull List<Boolean> inputs) {
+	public boolean[] evaluate(@Nonnull List<Boolean> inputs) {
 		final String binaryString = inputs.stream().map(b -> b ? "1" : "0")
-				.collect(Collectors.joining(", "));
-		log.info("Evaluating {} with table {}", binaryString, table);
-		final Boolean result = table.getMap().get(binaryString);
+				.collect(Collectors.joining());
+		final boolean[] result = table.getDefinition().get(binaryString);
+		log.info("Evaluated {} [{}] => {}", gate.getName(), binaryString, Arrays.toString(result));
 		if (result == null)
-			log.warn("No result for [" + binaryString + "] in table map: " + table.getMap());
-		return result != null && result;
+			log.error("No result for [{}] in table map: {}", binaryString, table.getDefinition());
+		return result;
 	}
 }

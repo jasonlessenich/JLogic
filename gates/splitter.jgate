@@ -2,29 +2,13 @@
   "name": "Splitter",
   "symbol": "*",
   "namingStrategy": "ALPHABET",
-  "tableDefinition": [
+  "tables": [
     {
       "inputCount": 1,
       "outputCount": 2,
-      "map": {
-        "0": false,
-        "1": true
-      }
-    },
-    {
-      "inputCount": 1,
-      "outputCount": 3,
-      "map": {
-        "0": false,
-        "1": true
-      }
-    },
-    {
-      "inputCount": 1,
-      "outputCount": 4,
-      "map": {
-        "0": false,
-        "1": true
+      "definition": {
+        "0": [false, false],
+        "1": [true, true]
       }
     }
   ]

@@ -19,7 +19,7 @@ public class JGate {
 	private String outputNamingStrategy = "INDEX";
 	private List<String> inputNames = List.of();
 	private List<String> outputNames = List.of();
-	private List<Table> tableDefinition;
+	private List<Table> tables;
 
 	public PinNamingStrategy getInputNamingStrategy() {
 		return getNamingStrategy(inputNamingStrategy);
@@ -30,15 +30,15 @@ public class JGate {
 	}
 
 	private PinNamingStrategy getNamingStrategy(String strategy) {
-		if (!STRATEGY_MAP.containsKey(inputNamingStrategy))
-			throw new IllegalArgumentException("No naming strategy for " + inputNamingStrategy);
-		return STRATEGY_MAP.get(inputNamingStrategy);
+		if (!STRATEGY_MAP.containsKey(strategy))
+			throw new IllegalArgumentException("No naming strategy for " + strategy);
+		return STRATEGY_MAP.get(strategy);
 	}
 
 	@Data
 	public static class Table {
 		private int inputCount;
 		private int outputCount;
-		private Map<String, Boolean> map;
+		private Map<String, boolean[]> definition;
 	}
 }

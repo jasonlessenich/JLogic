@@ -4,5 +4,5 @@ import java.util.List;
 
 @FunctionalInterface
 public interface Evaluable {
-	boolean evaluate(List<Boolean> inputs);
+	boolean[] evaluate(List<Boolean> inputs);
 }

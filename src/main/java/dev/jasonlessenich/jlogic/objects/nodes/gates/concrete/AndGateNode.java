@@ -9,11 +9,11 @@ import java.util.List;
 
 public class AndGateNode extends GateNode {
 	public AndGateNode(@Nonnull Point point) {
-		super(point, PinNamingStrategy.INDEX, PinNamingStrategy.INDEX, 2, 1, "&");
+		super(point, PinNamingStrategy.INDEX, 2, 1, "&");
 	}
 
 	@Override
-	public boolean evaluate(@Nonnull List<Boolean> inputs) {
-		return inputs.stream().allMatch(i -> i);
+	public boolean[] evaluate(@Nonnull List<Boolean> inputs) {
+		return new boolean[]{inputs.stream().allMatch(i -> i)};
 	}
 }

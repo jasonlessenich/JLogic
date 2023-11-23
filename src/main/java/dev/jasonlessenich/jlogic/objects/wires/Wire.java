@@ -3,6 +3,7 @@ package dev.jasonlessenich.jlogic.objects.wires;
 import dev.jasonlessenich.jlogic.controller.MainController;
 import dev.jasonlessenich.jlogic.objects.Connection;
 import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
+import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
@@ -17,10 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-public class Wire extends Parent {
+public class Wire extends Parent implements Evaluable {
 	private static final Color PIN_FILL = Color.WHITE;
 
 	@Nonnull
@@ -81,6 +83,11 @@ public class Wire extends Parent {
 		});
 	}
 
+	@Override
+	public boolean[] evaluate(@Nonnull List<Boolean> inputs) {
+		return new boolean[]{inputs.get(0)};
+	}
+
 	public void setStart(@Nonnull Point start) {
 		this.start = start;
 		if (startCircle != null) {
@@ -131,13 +138,13 @@ public class Wire extends Parent {
 	public void disconnect() {
 		if (startPin != null) {
 			startPin.setConnectedWire(null);
-			startPin.getNode().getConnections().removeIf(c -> c.getConnectionTo() == endPin);
+			startPin.getNode().getConnections().removeIf(c -> c.getConnectionTo() == startPin || c.getConnectionFrom() == startPin);
 			log.info("Disconnected {} ConnectablePin (start, {})", startPin.getType(), startPin.getNode());
 		}
 		if (endPin != null) {
 			endPin.setConnectedWire(null);
-			endPin.getNode().getConnections().removeIf(c -> c.getConnectionTo() == startPin);
-			log.info("Disconnected {} ConnectablePin (end, {})", startPin.getType(), startPin.getNode());
+			endPin.getNode().getConnections().removeIf(c -> c.getConnectionTo() == endPin || c.getConnectionFrom() == endPin);
+			log.info("Disconnected {} ConnectablePin (end, {})", endPin.getType(), endPin.getNode());
 		}
 		MainController.MAIN_PANE.getChildren().remove(this);
 	}

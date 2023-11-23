@@ -77,7 +77,7 @@ public class MainController {
 		// register gates
 		for (JGate gate : JLogicApplication.getGateManager().getGates()) {
 			final Menu gateMenu = new Menu("%s (%s)".formatted(gate.getName(), gate.getSymbol()));
-			for (JGate.Table table : gate.getTableDefinition()) {
+			for (JGate.Table table : gate.getTables()) {
 				final MenuItem subMenu = new MenuItem("%s IN / %s OUT".formatted(table.getInputCount(), table.getOutputCount()));
 				subMenu.setOnAction(actionEvent -> addConnectable(new CustomGateNode(lastContextMenuPoint, gate, table)));
 				gateMenu.getItems().add(subMenu);

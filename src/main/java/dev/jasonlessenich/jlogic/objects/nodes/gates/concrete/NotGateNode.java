@@ -9,11 +9,11 @@ import java.util.List;
 
 public class NotGateNode extends GateNode {
 	public NotGateNode(@Nonnull Point point) {
-		super(point, PinNamingStrategy.INDEX, PinNamingStrategy.INDEX, 1, 1, "-1");
+		super(point, PinNamingStrategy.INDEX, 1, 1, "-1");
 	}
 
 	@Override
-	public boolean evaluate(@Nonnull List<Boolean> inputs) {
-		return inputs.isEmpty() || !inputs.get(0);
+	public boolean[] evaluate(@Nonnull List<Boolean> inputs) {
+		return new boolean[]{inputs.isEmpty() || !inputs.get(0)};
 	}
 }
