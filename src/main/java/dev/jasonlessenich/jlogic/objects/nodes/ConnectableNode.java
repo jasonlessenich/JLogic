@@ -2,6 +2,8 @@ package dev.jasonlessenich.jlogic.objects.nodes;
 
 import dev.jasonlessenich.jlogic.controller.MainController;
 import dev.jasonlessenich.jlogic.objects.Connection;
+import dev.jasonlessenich.jlogic.objects.nodes.gates.CustomGateNode;
+import dev.jasonlessenich.jlogic.objects.nodes.gates.GateNode;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.objects.pins.layout_strategies.PinLayoutStrategy;
 import dev.jasonlessenich.jlogic.objects.pins.naming_strategies.PinNamingStrategy;
@@ -19,7 +21,8 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 @Slf4j
@@ -124,15 +127,14 @@ public abstract class ConnectableNode extends StackPane {
 				final List<Boolean> booleans = node.getInputPins()
 						.stream()
 						.map(ConnectablePin::isActive)
-						.collect(Collectors.toCollection(ArrayList::new));
-				// TODO: respect actual index of input pin
-				// pad with false if not enough inputs
-				while (booleans.size() < node.getInputCount())
-					booleans.add(false);
+						.toList();
 				final boolean[] result = eval.evaluate(booleans);
 				log.debug("Notified {} of state change with input: {} ({} -> {})", node, booleans, node.getState().getActive(), result);
-				// TODO: add (random) delay (e.g. d-latch race condition)
-				node.setState(result);
+				// add random delay to prevent race conditions
+				final int delay = node instanceof GateNode gate &&
+						!(node instanceof CustomGateNode c && c.getSymbol().equals("*")) ? gate.getSpecificGateDelay() : 0;
+				CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS)
+						.execute(() -> node.setState(result));
 			}
 		}
 	}

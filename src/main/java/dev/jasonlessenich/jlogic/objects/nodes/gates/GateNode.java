@@ -15,10 +15,12 @@ import javafx.scene.text.Text;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
 public abstract class GateNode extends ConnectableNode implements Evaluable {
 	private final String symbol;
+	private final int specificGateDelay;
 
 	public GateNode(
 			@Nonnull Point point,
@@ -30,6 +32,7 @@ public abstract class GateNode extends ConnectableNode implements Evaluable {
 	) {
 		super(point, PinLayoutStrategy.GATE, inputNamingStrategy, outputNamingStrategy, inputCount, outputCount);
 		this.symbol = symbol;
+		this.specificGateDelay = ThreadLocalRandom.current().nextInt(100);
 		((StackPane) getModel()).getChildren().add(buildSymbolText());
 	}
 
