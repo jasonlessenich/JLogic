@@ -17,10 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Getter
 @Slf4j
@@ -89,7 +88,7 @@ public abstract class ConnectableNode extends StackPane {
 		return Point.of(getLayoutX(), getLayoutY());
 	}
 
-	public void setActive(boolean... active) {
+	public void setState(boolean... active) {
 		getState().setActive(active);
 	}
 
@@ -112,25 +111,28 @@ public abstract class ConnectableNode extends StackPane {
 	}
 
 	private void handleStateChange(boolean[] state) {
+		final List<ConnectablePin> outputPins = getOutputPins();
+		for (int i = 0; i < outputPins.size(); i++) {
+			final ConnectablePin pin = outputPins.get(i);
+			// update current pin state
+			pin.setState(state[i]);
+		}
 		for (Connection con : getTargetConnections()) {
 			final ConnectableNode node = con.getConnectionTo().getNode();
 			if (node instanceof Evaluable eval) {
-				final List<Boolean> booleans = node.getSourceConnections()
+				// simply get state of all input pins
+				final List<Boolean> booleans = node.getInputPins()
 						.stream()
-						.map(c -> c.getConnectionTo().getNode().getState().getActive()[0])
-						.toList();
+						.map(ConnectablePin::isActive)
+						.collect(Collectors.toCollection(ArrayList::new));
+				// TODO: respect actual index of input pin
+				// pad with false if not enough inputs
+				while (booleans.size() < node.getInputCount())
+					booleans.add(false);
 				final boolean[] result = eval.evaluate(booleans);
 				log.debug("Notified {} of state change with input: {} ({} -> {})", node, booleans, node.getState().getActive(), result);
-				// TODO: delay & add random delay (e.g. d-latch race condition)
-				System.out.println(Arrays.toString(result));
-				node.setActive(result);
-			}
-		}
-		final List<ConnectablePin> outputPins = getOutputPins();
-		for (int i = 0; i < outputPins.size(); i++) {
-			final Optional<Wire> pin = outputPins.get(i).getConnectedWire();
-			if (pin.isPresent()) {
-				pin.get().setActivated(state[i]);
+				// TODO: add (random) delay (e.g. d-latch race condition)
+				node.setState(result);
 			}
 		}
 	}

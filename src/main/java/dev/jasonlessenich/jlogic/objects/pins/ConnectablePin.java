@@ -32,6 +32,8 @@ public class ConnectablePin extends Parent {
 	@Getter
 	@Setter
 	private Point displacement;
+	@Getter
+	private boolean active;
 
 	@Nullable
 	private Wire wire;
@@ -67,6 +69,23 @@ public class ConnectablePin extends Parent {
 			this.wire = wire;
 			MainController.MAIN_PANE.getChildren().add(wire);
 		});
+	}
+
+	public void setState(boolean active) {
+		this.active = active;
+		model.setFill(active ? Color.LAWNGREEN : DEFAULT_COLOR);
+		if (getConnectedWire().isPresent()) {
+			final Wire w = getConnectedWire().get();
+			// update wire state
+			w.setActivated(active);
+			// update wire pins
+			if (type == Type.INPUT && w.getStartPin() != null
+					&& w.getStartPin().isActive() != active)
+				w.getStartPin().setState(active);
+			if (type == Type.OUTPUT && w.getEndPin() != null
+					&& w.getEndPin().isActive() != active)
+				w.getEndPin().setState(active);
+		}
 	}
 
 	public Point getPinPosition() {

@@ -20,24 +20,12 @@ public abstract class IONode extends ConnectableNode {
 	protected abstract void setFill(Color color);
 
 	@Override
-	public void setActive(boolean[] activated) {
-		super.setActive(activated);
-		System.out.println(Arrays.toString(activated));
-		// get pin index
-		int index = 0;
-		if (activated.length > 1) {
-			for (ConnectablePin pin : getInputPins()) {
-				if (pin.getConnectedWire().isPresent()) {
-					final ConnectablePin startPin = pin.getConnectedWire().get().getStartPin();
-					if (startPin == null) continue;
-					index = startPin.getNode().getOutputPins().indexOf(startPin);
-				}
-			}
-		}
-		setFill(activated[index] ? Color.LAWNGREEN : Color.ORANGERED);
+	public void setState(boolean[] activated) {
+		super.setState(activated);
+		setFill(activated[0] ? Color.LAWNGREEN : Color.RED);
 	}
 
 	public void toggleActivated() {
-		setActive(new boolean[]{!getState().getActive()[0]});
+		setState(new boolean[]{!getState().getActive()[0]});
 	}
 }
