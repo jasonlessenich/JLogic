@@ -54,7 +54,7 @@ public class ConnectablePin extends Parent {
 		model = buildModel();
 		getChildren().add(model);
 		setOnMouseEntered(e -> model.setFill(HOVER_COLOR));
-		setOnMouseExited(e -> model.setFill(DEFAULT_COLOR));
+		setOnMouseExited(e -> model.setFill(isActive() ? Color.LAWNGREEN : DEFAULT_COLOR));
 		setOnMouseDragged(me -> {
 			// clear old wire
 			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof Wire && n == this.wire);

@@ -133,6 +133,8 @@ public class Wire extends Parent implements Evaluable {
 		log.info("Connected {} ConnectablePin ({}) to {} ConnectablePin ({})",
 				from.getType(), from.getNode(), to.getType(), to.getNode()
 		);
+		from.getNode().evaluate(0);
+		to.getNode().evaluate(0);
 	}
 
 	public void disconnect() {

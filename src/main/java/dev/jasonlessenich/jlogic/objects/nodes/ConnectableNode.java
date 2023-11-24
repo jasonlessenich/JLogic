@@ -27,12 +27,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Slf4j
 public abstract class ConnectableNode extends StackPane {
-	private final PinLayoutStrategy layoutStrategy;
-	private final PinNamingStrategy inputNamingStrategy;
-	private final PinNamingStrategy outputNamingStrategy;
-
 	private final NodeState state;
-
 	private final List<Connection> connections;
 	private final Map<ConnectablePin.Type, List<ConnectablePin>> pins;
 	private final int inputCount;
@@ -48,9 +43,6 @@ public abstract class ConnectableNode extends StackPane {
 			int inputCount,
 			int outputCount
 	) {
-		this.layoutStrategy = layoutStrategy;
-		this.inputNamingStrategy = inputNamingStrategy;
-		this.outputNamingStrategy = outputNamingStrategy;
 		this.state = new NodeState(outputCount, this::handleStateChange);
 		this.connections = new ArrayList<>();
 		this.inputCount = inputCount;
@@ -113,29 +105,30 @@ public abstract class ConnectableNode extends StackPane {
 		return connections.stream().filter(c -> c.getConnectionType() == Connection.Type.FORWARD).toList();
 	}
 
+	public void evaluate(int delayMillis) {
+		if (this instanceof Evaluable eval) {
+			final List<Boolean> input = getInputPins().stream()
+					.map(ConnectablePin::isActive)
+					.toList();
+			final boolean[] result = eval.evaluate(input);
+			log.debug("Notified {} of state change with input: {} ({} -> {})", this, input, getState().getActive(), result);
+			CompletableFuture.delayedExecutor(delayMillis, TimeUnit.MILLISECONDS)
+					.execute(() -> setState(result));
+		}
+	}
+
 	private void handleStateChange(boolean[] state) {
+		// update output pins
 		final List<ConnectablePin> outputPins = getOutputPins();
 		for (int i = 0; i < outputPins.size(); i++) {
 			final ConnectablePin pin = outputPins.get(i);
-			// update current pin state
 			pin.setState(state[i]);
 		}
 		for (Connection con : getTargetConnections()) {
 			final ConnectableNode node = con.getConnectionTo().getNode();
-			if (node instanceof Evaluable eval) {
-				// simply get state of all input pins
-				final List<Boolean> booleans = node.getInputPins()
-						.stream()
-						.map(ConnectablePin::isActive)
-						.toList();
-				final boolean[] result = eval.evaluate(booleans);
-				log.debug("Notified {} of state change with input: {} ({} -> {})", node, booleans, node.getState().getActive(), result);
-				// add random delay to prevent race conditions
-				final int delay = node instanceof GateNode gate &&
-						!(node instanceof CustomGateNode c && c.getSymbol().equals("*")) ? gate.getSpecificGateDelay() : 0;
-				CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS)
-						.execute(() -> node.setState(result));
-			}
+			final int delay = node instanceof GateNode gate &&
+					!(node instanceof CustomGateNode c && c.getSymbol().equals("*")) ? gate.getSpecificGateDelay() : 0;
+			node.evaluate(delay);
 		}
 	}
 
@@ -146,7 +139,10 @@ public abstract class ConnectableNode extends StackPane {
 		delete.setOnAction(e -> {
 					getPins().values().stream()
 							.flatMap(List::stream)
-							.forEach(p -> p.getConnectedWire().ifPresent(Wire::disconnect));
+							.forEach(p -> {
+								p.getConnectedWire().ifPresent(Wire::disconnect);
+								MainController.PINS.remove(p);
+							});
 					MainController.MAIN_PANE.getChildren().remove(this);
 				}
 		);
