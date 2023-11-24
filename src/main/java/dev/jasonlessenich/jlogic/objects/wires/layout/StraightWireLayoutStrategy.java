@@ -38,7 +38,7 @@ public class StraightWireLayoutStrategy implements WireLayoutStrategy {
 		if (xLength == 0 || yLength == 0) {
 			return List.of(new Pair<>(start, end));
 		}
-		if (xLength < Constants.GRID_STEP_SIZE * 3) {
+		if (Math.abs(xLength) < Constants.GRID_STEP_SIZE * 3) {
 			final Point first = Point.of(start.getX() + xLength, start.getY());
 			return List.of(new Pair<>(start, first), new Pair<>(first, end));
 		}

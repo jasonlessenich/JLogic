@@ -1,25 +1,16 @@
 package dev.jasonlessenich.jlogic.objects.wires;
 
-import dev.jasonlessenich.jlogic.controller.MainController;
-import dev.jasonlessenich.jlogic.objects.Connection;
-import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.objects.wires.layout.WireLayoutStrategy;
-import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.Parent;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 public class PreviewWire extends Parent {
@@ -66,6 +57,18 @@ public class PreviewWire extends Parent {
 	}
 
 	/**
+	 * Sets whether the wire can, when released, connect to a {@link ConnectablePin}.
+	 *
+	 * @param canConnect True if the wire can connect, false otherwise.
+	 */
+	public void setCanConnect(boolean canConnect) {
+		lines.forEach(l -> {
+			if (canConnect) l.getStrokeDashArray().clear();
+			else l.getStrokeDashArray().addAll(5d, 5d);
+		});
+	}
+
+	/**
 	 * Redraws the lines of this wire using the given {@link WireLayoutStrategy}.
 	 *
 	 * @param start The start point of the wire.
@@ -76,7 +79,7 @@ public class PreviewWire extends Parent {
 		getChildren().removeIf(n -> n instanceof Line);
 		this.lines = layoutStrategy.layoutWire(start, end, (from, to) -> {
 			final Line line = new Line(from.getX(), from.getY(), to.getX(), to.getY());
-			line.setStrokeWidth(1);
+			line.setStrokeWidth(2);
 			line.setStroke(Color.BLUE);
 			return line;
 		});

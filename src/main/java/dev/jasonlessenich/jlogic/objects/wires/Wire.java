@@ -6,7 +6,7 @@ import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.objects.wires.layout.WireLayoutStrategy;
 import dev.jasonlessenich.jlogic.utils.Constants;
-import dev.jasonlessenich.jlogic.utils.Drag;
+import dev.jasonlessenich.jlogic.utils.NodeUtils;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
@@ -197,18 +197,6 @@ public class Wire extends Parent implements Evaluable {
 	}
 
 	/**
-	 * Checks whether there is a {@link ConnectablePin} at the given point.
-	 *
-	 * @param to The point to check.
-	 * @return An {@link Optional} containing the {@link ConnectablePin} if there is one.
-	 */
-	public Optional<ConnectablePin> isPinAtPoint(Point to) {
-		return MainController.PINS.stream()
-				.filter(p -> p.getPinPosition().equals(to))
-				.findFirst();
-	}
-
-	/**
 	 * Creates a new {@link Wire} connecting the given {@link ConnectablePin}s.
 	 * This will remove the start and end {@link Circle}s from this wire, as well
 	 * as lock the start and end points to the {@link ConnectablePin}s.
@@ -297,7 +285,7 @@ public class Wire extends Parent implements Evaluable {
 			final Point newPos = Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE);
 			if (isStart) setStart(newPos);
 			else setEnd(newPos);
-			final Optional<ConnectablePin> pinOptional = isPinAtPoint(newPos);
+			final Optional<ConnectablePin> pinOptional = NodeUtils.isPinAtPoint(newPos);
 			pinOptional.ifPresent(pin -> {
 				if (isStart && endPin != null) connect(pin, endPin);
 				if (!isStart && startPin != null) connect(startPin, pin);

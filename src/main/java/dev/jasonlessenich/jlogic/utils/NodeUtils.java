@@ -1,8 +1,11 @@
 package dev.jasonlessenich.jlogic.utils;
 
+import dev.jasonlessenich.jlogic.controller.MainController;
+import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import javafx.scene.layout.Region;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 
 /**
  * A utility class for interacting with {@link javafx.scene.Node}s.
@@ -36,5 +39,18 @@ public class NodeUtils {
 	 */
 	public static Region setSize(Region node, double size) {
 		return setSize(node, size, size);
+	}
+
+	/**
+	 * Checks whether there is a {@link ConnectablePin} at the given point.
+	 *
+	 * @param to The point to check.
+	 * @return An {@link Optional} containing the {@link ConnectablePin} if there is one.
+	 */
+	@Nonnull
+	public static Optional<ConnectablePin> isPinAtPoint(Point to) {
+		return MainController.PINS.stream()
+				.filter(p -> p.getPinPosition().equals(to))
+				.findFirst();
 	}
 }

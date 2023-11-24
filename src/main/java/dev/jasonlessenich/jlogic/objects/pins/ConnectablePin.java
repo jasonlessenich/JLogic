@@ -7,6 +7,7 @@ import dev.jasonlessenich.jlogic.objects.wires.PreviewWire;
 import dev.jasonlessenich.jlogic.objects.wires.Wire;
 import dev.jasonlessenich.jlogic.objects.wires.layout.WireLayoutStrategy;
 import dev.jasonlessenich.jlogic.utils.Constants;
+import dev.jasonlessenich.jlogic.utils.NodeUtils;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.Parent;
 import javafx.scene.paint.Color;
@@ -55,25 +56,30 @@ public class ConnectablePin extends Parent {
 		getChildren().add(model);
 		setOnMouseEntered(e -> model.setFill(HOVER_COLOR));
 		setOnMouseExited(e -> model.setFill(isActive() ? Color.LAWNGREEN : DEFAULT_COLOR));
-		Point start = new Point();
 		Point end = new Point();
 		setOnMouseDragged(me -> {
 			if (!me.isPrimaryButtonDown()) return;
 			// clear old wire
 			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof PreviewWire);
-			start.set(getPinPosition());
+			final Point start = getPinPosition();
 			end.set(Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE));
 			final PreviewWire wire = type == Type.OUTPUT
 					? new PreviewWire(WireLayoutStrategy.STRAIGHT, start, end)
 					: new PreviewWire(WireLayoutStrategy.STRAIGHT, end, start);
+			wire.setCanConnect(NodeUtils.isPinAtPoint(end).isPresent());
 			// add new wire at mouse pos
 			MainController.MAIN_PANE.getChildren().add(wire);
 		});
 		setOnMouseReleased(me -> {
 			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof PreviewWire || n == this.wire);
+			final Point start = getPinPosition();
+			final ConnectablePin endPin = NodeUtils.isPinAtPoint(end)
+					.orElse(null);
 			final Wire wire = type == Type.OUTPUT
-					? new Wire(start, end, this, null)
-					: new Wire(end, start, null, this);
+					? new Wire(start, end, this, endPin)
+					: new Wire(end, start, endPin, this);
+			if (endPin != null)
+				wire.connect(this, endPin);
 			this.wire = wire;
 			MainController.MAIN_PANE.getChildren().add(wire);
 		});
