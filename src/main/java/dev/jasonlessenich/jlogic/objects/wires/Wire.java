@@ -6,6 +6,7 @@ import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.objects.wires.layout.WireLayoutStrategy;
 import dev.jasonlessenich.jlogic.utils.Constants;
+import dev.jasonlessenich.jlogic.utils.Drag;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
@@ -77,6 +78,12 @@ public class Wire extends Parent implements Evaluable {
 	 */
 	@Nullable
 	private final Circle endCircle;
+
+	/**
+	 * Whether this wire is activated.
+	 */
+	@Getter
+	private boolean activated;
 
 	/**
 	 * Constructs a new {@link Wire} with the given {@link WireLayoutStrategy},
@@ -157,6 +164,7 @@ public class Wire extends Parent implements Evaluable {
 	 * @param activated The new activation state.
 	 */
 	public void setActivated(boolean activated) {
+		this.activated = activated;
 		lines.forEach(l -> l.setStroke(activated ? Color.LIMEGREEN : Color.BLACK));
 	}
 
@@ -253,7 +261,13 @@ public class Wire extends Parent implements Evaluable {
 	 */
 	private List<Line> redrawLines(Point start, Point end) {
 		getChildren().removeIf(n -> n instanceof Line);
-		this.lines = layoutStrategy.layoutWire(start, end);
+		this.lines = layoutStrategy.layoutWire(start, end, (from, to) -> {
+			final Line line = new Line(from.getX(), from.getY(), to.getX(), to.getY());
+			line.setStrokeWidth(3);
+			line.setStroke(Color.BLACK);
+			return line;
+		});
+		setActivated(this.activated);
 		getChildren().addAll(lines);
 		return lines;
 	}

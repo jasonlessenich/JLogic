@@ -4,6 +4,8 @@ import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.shape.Line;
 
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 /**
  * An interface representing a strategy for laying out a wire.
@@ -19,5 +21,5 @@ public interface WireLayoutStrategy {
 	 * @param end The end {@link Point}.
 	 * @return A {@link List} of {@link Line}s.
 	 */
-	List<Line> layoutWire(Point start, Point end);
+	List<Line> layoutWire(Point start, Point end, BiFunction<Point, Point, Line> modelFunction);
 }

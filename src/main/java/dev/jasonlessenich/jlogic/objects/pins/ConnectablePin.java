@@ -3,7 +3,9 @@ package dev.jasonlessenich.jlogic.objects.pins;
 import dev.jasonlessenich.jlogic.controller.MainController;
 import dev.jasonlessenich.jlogic.objects.Connection;
 import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
+import dev.jasonlessenich.jlogic.objects.wires.PreviewWire;
 import dev.jasonlessenich.jlogic.objects.wires.Wire;
+import dev.jasonlessenich.jlogic.objects.wires.layout.WireLayoutStrategy;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.Parent;
@@ -53,20 +55,29 @@ public class ConnectablePin extends Parent {
 		getChildren().add(model);
 		setOnMouseEntered(e -> model.setFill(HOVER_COLOR));
 		setOnMouseExited(e -> model.setFill(isActive() ? Color.LAWNGREEN : DEFAULT_COLOR));
+		Point start = new Point();
+		Point end = new Point();
 		setOnMouseDragged(me -> {
+			if (!me.isPrimaryButtonDown()) return;
 			// clear old wire
-			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof Wire && n == this.wire);
-			final Point start = getPinPosition();
-			final Point end = Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE);
+			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof PreviewWire);
+			start.set(getPinPosition());
+			end.set(Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE));
+			final PreviewWire wire = type == Type.OUTPUT
+					? new PreviewWire(WireLayoutStrategy.STRAIGHT, start, end)
+					: new PreviewWire(WireLayoutStrategy.STRAIGHT, end, start);
+			// add new wire at mouse pos
+			MainController.MAIN_PANE.getChildren().add(wire);
+		});
+		setOnMouseReleased(me -> {
+			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof PreviewWire || n == this.wire);
 			final Wire wire = type == Type.OUTPUT
 					? new Wire(start, end, this, null)
 					: new Wire(end, start, null, this);
-			// final Optional<ConnectablePin> pinOptional = wire.checkConnection(node, to);
-			// pinOptional.ifPresent(wire::connect);
-			// add new wire at mouse pos
 			this.wire = wire;
 			MainController.MAIN_PANE.getChildren().add(wire);
 		});
+		setOnDragDetected(e -> startFullDrag());
 	}
 
 	public void setState(boolean active) {

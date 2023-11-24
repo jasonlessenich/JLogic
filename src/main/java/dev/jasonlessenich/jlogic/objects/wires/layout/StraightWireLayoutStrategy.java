@@ -1,5 +1,6 @@
 package dev.jasonlessenich.jlogic.objects.wires.layout;
 
+import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -7,6 +8,7 @@ import javafx.util.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * An implementation of {@link WireLayoutStrategy} that lays out a wire only in straight lines.
@@ -15,9 +17,9 @@ public class StraightWireLayoutStrategy implements WireLayoutStrategy {
 	protected StraightWireLayoutStrategy() {}
 
 	@Override
-	public List<Line> layoutWire(Point start, Point end) {
+	public List<Line> layoutWire(Point start, Point end, BiFunction<Point, Point, Line> modelFunction) {
 		final List<Pair<Point, Point>> points = straightLines(start, end);
-		return points.stream().map(p -> buildLine(p.getKey(), p.getValue())).toList();
+		return points.stream().map(p -> modelFunction.apply(p.getKey(), p.getValue())).toList();
 	}
 
 	/**
@@ -36,23 +38,12 @@ public class StraightWireLayoutStrategy implements WireLayoutStrategy {
 		if (xLength == 0 || yLength == 0) {
 			return List.of(new Pair<>(start, end));
 		}
+		if (xLength < Constants.GRID_STEP_SIZE * 3) {
+			final Point first = Point.of(start.getX() + xLength, start.getY());
+			return List.of(new Pair<>(start, first), new Pair<>(first, end));
+		}
 		final Point first = Point.of(start.getX() + xLength / 2, start.getY());
 		final Point second = Point.of(first.getX(), start.getY() + yLength);
 		return List.of(new Pair<>(start, first), new Pair<>(first, second), new Pair<>(second, end));
-	}
-
-	/**
-	 * Builds a {@link Line} from the given start and end {@link Point}s.
-	 *
-	 * @param start The start {@link Point}.
-	 * @param end The end {@link Point}.
-	 * @return The {@link Line}.
-	 */
-	@Nonnull
-	private Line buildLine(@Nonnull Point start, @Nonnull Point end) {
-		final Line line = new Line(start.getX(), start.getY(), end.getX(), end.getY());
-		line.setStrokeWidth(3);
-		line.setStroke(Color.BLACK);
-		return line;
 	}
 }

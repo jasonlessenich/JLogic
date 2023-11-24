@@ -59,6 +59,18 @@ public class Point {
 		return this;
 	}
 
+	/**
+	 * Sets the x and y coordinates of this {@link Point} to the given values.
+	 *
+	 * @param point The {@link Point} to set this {@link Point} to.
+	 * @return This {@link Point}.
+	 */
+	public Point set(@Nonnull Point point) {
+		this.x = point.x;
+		this.y = point.y;
+		return this;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
