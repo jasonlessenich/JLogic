@@ -5,10 +5,20 @@ import lombok.Data;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
+/**
+ * A class representing a point in 2D space.
+ */
 @Data
 public class Point {
 	private double x, y;
 
+	/**
+	 * Creates a new {@link Point} with the given coordinates.
+	 *
+	 * @param x The x coordinate.
+	 * @param y The y coordinate.
+	 * @return The {@link Point}.
+	 */
 	public static @Nonnull Point of(double x, double y) {
 		final Point point = new Point();
 		point.setX(x);
@@ -16,16 +26,37 @@ public class Point {
 		return point;
 	}
 
+	/**
+	 * "Steps" the point by rounding its coordinates to the nearest multiple of a step.
+	 * This simply uses {@link PointUtils#step(double, int)}.
+	 *
+	 * @param step The step to round to.
+	 * @return The stepped {@link Point}.
+	 */
 	public @Nonnull Point stepped(int step) {
 		return Point.of(PointUtils.step(x, step), PointUtils.step(y, step));
 	}
 
+	/**
+	 * Adds the given x value to the x coordinate of this {@link Point}.
+	 *
+	 * @param x The x value to add.
+	 * @return This {@link Point}.
+	 */
 	public Point addX(double x) {
-		return Point.of(this.x + x, y);
+		this.x += x;
+		return this;
 	}
 
+	/**
+	 * Adds the given y value to the y coordinate of this {@link Point}.
+	 *
+	 * @param y The y value to add.
+	 * @return This {@link Point}.
+	 */
 	public Point addY(double y) {
-		return Point.of(x, this.y + y);
+		this.y += y;
+		return this;
 	}
 
 	@Override

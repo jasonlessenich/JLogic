@@ -10,7 +10,7 @@ import java.util.List;
  */
 @FunctionalInterface
 public interface WireLayoutStrategy {
-	WireLayoutStrategy STEPPED = new SteppedWireLayoutStrategy();
+	WireLayoutStrategy STRAIGHT = new StraightWireLayoutStrategy();
 
 	/**
 	 * Lays out a set of {@link Line lines} that make up the model of a wire.

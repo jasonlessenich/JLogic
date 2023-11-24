@@ -129,7 +129,7 @@ public class Wire extends Parent implements Evaluable {
 	/**
 	 * Constructs a new {@link Wire} with the given start and end points,
 	 * and start and end {@link ConnectablePin}s.
-	 * This defaults to using the {@link WireLayoutStrategy#STEPPED} layout strategy.
+	 * This defaults to using the {@link WireLayoutStrategy#STRAIGHT} layout strategy.
 	 *
 	 * @param start The start point of the wire.
 	 * @param end The end point of the wire.
@@ -142,7 +142,7 @@ public class Wire extends Parent implements Evaluable {
 			@Nullable ConnectablePin startPin,
 			@Nullable ConnectablePin endPin
 	) {
-		this(WireLayoutStrategy.STEPPED, start, end, startPin, endPin);
+		this(WireLayoutStrategy.STRAIGHT, start, end, startPin, endPin);
 	}
 
 	@Override
