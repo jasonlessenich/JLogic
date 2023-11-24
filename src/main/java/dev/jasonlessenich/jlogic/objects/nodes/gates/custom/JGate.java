@@ -1,6 +1,6 @@
 package dev.jasonlessenich.jlogic.objects.nodes.gates.custom;
 
-import dev.jasonlessenich.jlogic.objects.pins.naming_strategies.PinNamingStrategy;
+import dev.jasonlessenich.jlogic.objects.pins.naming.PinNamingStrategy;
 import lombok.Data;
 
 import java.util.List;

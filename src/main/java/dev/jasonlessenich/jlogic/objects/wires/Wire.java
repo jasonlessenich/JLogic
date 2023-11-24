@@ -4,6 +4,7 @@ import dev.jasonlessenich.jlogic.controller.MainController;
 import dev.jasonlessenich.jlogic.objects.Connection;
 import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
+import dev.jasonlessenich.jlogic.objects.wires.layout.WireLayoutStrategy;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.Parent;
@@ -20,39 +21,85 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * A {@link Wire} that represents a connection between two {@link ConnectablePin}s.
+ * This is a {@link Parent} that contains the lines that make up the wire, as well as
+ * the start and end {@link Circle}s if there is no {@link ConnectablePin}.
+ * The layout of this wire is determined by the specified {@link WireLayoutStrategy}.
+ */
 @Slf4j
 public class Wire extends Parent implements Evaluable {
 	private static final Color PIN_FILL = Color.WHITE;
-	/* MODEL */
-	private final Line line;
-	@Nullable
-	private final Circle startCircle;
-	@Nullable
-	private final Circle endCircle;
-	@Nonnull
+
+	/**
+	 * The strategy used to layout the wire
+	 */
+	private final WireLayoutStrategy layoutStrategy;
+
+	/**
+	 * The wire's start point.
+	 */
 	@Getter
 	private Point start;
-	@Nonnull
+
+	/**
+	 * The wire's end point.
+	 */
 	@Getter
 	private Point end;
+
+	/**
+	 * The nullable {@link ConnectablePin} (start) that this wire is connected to.
+	 */
 	@Nullable
 	@Getter
 	private ConnectablePin startPin;
+	/**
+	 * The nullable {@link ConnectablePin} (end) that this wire is connected to.
+	 */
 	@Nullable
 	@Getter
 	private ConnectablePin endPin;
 
+	/**
+	 * The lines that make up this wire.
+	 */
+	private List<Line> lines;
+
+	/**
+	 * The circle at the start of the wire if there is no {@link ConnectablePin}.
+	 */
+	@Nullable
+	private final Circle startCircle;
+
+	/**
+	 * The circle at the end of the wire if there is no {@link ConnectablePin}.
+	 */
+	@Nullable
+	private final Circle endCircle;
+
+	/**
+	 * Constructs a new {@link Wire} with the given {@link WireLayoutStrategy},
+	 * start and end points, and start and end {@link ConnectablePin}s.
+	 *
+	 * @param layoutStrategy The {@link WireLayoutStrategy} to use to lay out the wire.
+	 * @param start The start point of the wire.
+	 * @param end The end point of the wire.
+	 * @param startPin A nullable {@link ConnectablePin} that this wire is connected to.
+	 * @param endPin A nullable {@link ConnectablePin} that this wire is connected to.
+	 */
 	public Wire(
+			@Nonnull WireLayoutStrategy layoutStrategy,
 			@Nonnull Point start,
 			@Nonnull Point end,
 			@Nullable ConnectablePin startPin,
 			@Nullable ConnectablePin endPin
 	) {
 		setId("Wire");
+		this.layoutStrategy = layoutStrategy;
 		this.start = start;
 		this.end = end;
-		this.line = buildLine(start, end);
-		getChildren().add(line);
+		this.lines = redrawLines(start, end);
 		// build start pin
 		this.startPin = startPin;
 		if (startPin == null) {
@@ -69,7 +116,7 @@ public class Wire extends Parent implements Evaluable {
 		} else {
 			this.endCircle = null;
 		}
-		final ContextMenu contextMenu = buildDefaultContextMenu();
+		final ContextMenu contextMenu = buildContextMenu();
 		setOnMousePressed(me -> {
 			if (me.isSecondaryButtonDown()) {
 				contextMenu.show(this, me.getScreenX(), me.getScreenY());
@@ -79,41 +126,88 @@ public class Wire extends Parent implements Evaluable {
 		});
 	}
 
+	/**
+	 * Constructs a new {@link Wire} with the given start and end points,
+	 * and start and end {@link ConnectablePin}s.
+	 * This defaults to using the {@link WireLayoutStrategy#STEPPED} layout strategy.
+	 *
+	 * @param start The start point of the wire.
+	 * @param end The end point of the wire.
+	 * @param startPin A nullable {@link ConnectablePin} that this wire is connected to.
+	 * @param endPin A nullable {@link ConnectablePin} that this wire is connected to.
+	 */
+	public Wire(
+			@Nonnull Point start,
+			@Nonnull Point end,
+			@Nullable ConnectablePin startPin,
+			@Nullable ConnectablePin endPin
+	) {
+		this(WireLayoutStrategy.STEPPED, start, end, startPin, endPin);
+	}
+
 	@Override
 	public boolean[] evaluate(@Nonnull List<Boolean> inputs) {
 		return new boolean[]{inputs.get(0)};
 	}
 
+	/**
+	 * Sets the activation state of this wire.
+	 * This simply changes the color of the wire.
+	 *
+	 * @param activated The new activation state.
+	 */
+	public void setActivated(boolean activated) {
+		lines.forEach(l -> l.setStroke(activated ? Color.LIMEGREEN : Color.BLACK));
+	}
+
+	/**
+	 * Sets the start point of this wire.
+	 *
+	 * @param start The new start point.
+	 */
 	public void setStart(@Nonnull Point start) {
 		this.start = start;
 		if (startCircle != null) {
 			startCircle.setCenterX(start.getX());
 			startCircle.setCenterY(start.getY());
 		}
-		line.setStartX(start.getX());
-		line.setStartY(start.getY());
+		redrawLines(start, end);
 	}
 
+	/**
+	 * Sets the end point of this wire.
+	 *
+	 * @param end The new end point.
+	 */
 	public void setEnd(@Nonnull Point end) {
 		this.end = end;
 		if (endCircle != null) {
 			endCircle.setCenterX(end.getX());
 			endCircle.setCenterY(end.getY());
 		}
-		line.setEndX(end.getX());
-		line.setEndY(end.getY());
+		redrawLines(start, end);
 	}
 
-	public void setActivated(boolean activated) {
-		line.setStroke(activated ? Color.LIMEGREEN : Color.BLACK);
-	}
-
+	/**
+	 * Checks whether there is a {@link ConnectablePin} at the given point.
+	 *
+	 * @param to The point to check.
+	 * @return An {@link Optional} containing the {@link ConnectablePin} if there is one.
+	 */
 	public Optional<ConnectablePin> isPinAtPoint(Point to) {
 		return MainController.PINS.stream()
 				.filter(p -> p.getPinPosition().equals(to))
 				.findFirst();
 	}
 
+	/**
+	 * Creates a new {@link Wire} connecting the given {@link ConnectablePin}s.
+	 * This will remove the start and end {@link Circle}s from this wire, as well
+	 * as lock the start and end points to the {@link ConnectablePin}s.
+	 *
+	 * @param from The {@link ConnectablePin} to connect from.
+	 * @param to The {@link ConnectablePin} to connect to.
+	 */
 	public void connect(@Nonnull ConnectablePin from, @Nonnull ConnectablePin to) {
 		if (!from.canConnectTo(to)) return;
 		// remove end pin
@@ -133,6 +227,9 @@ public class Wire extends Parent implements Evaluable {
 		to.getNode().evaluate(0);
 	}
 
+	/**
+	 * Disconnects this wire from its {@link ConnectablePin}s and removes it from the pane.
+	 */
 	public void disconnect() {
 		if (startPin != null) {
 			startPin.setConnectedWire(null);
@@ -147,6 +244,27 @@ public class Wire extends Parent implements Evaluable {
 		MainController.MAIN_PANE.getChildren().remove(this);
 	}
 
+	/**
+	 * Redraws the lines of this wire using the given {@link WireLayoutStrategy}.
+	 *
+	 * @param start The start point of the wire.
+	 * @param end The end point of the wire.
+	 * @return The new lines.
+	 */
+	private List<Line> redrawLines(Point start, Point end) {
+		getChildren().removeIf(n -> n instanceof Line);
+		this.lines = layoutStrategy.layoutWire(start, end);
+		getChildren().addAll(lines);
+		return lines;
+	}
+
+	/**
+	 * Builds a single, draggable {@link Circle} that acts as a placeholder for a {@link ConnectablePin}.
+	 *
+	 * @param p The point to build the {@link Circle} at.
+	 * @param isStart Whether this is the start or end {@link Circle}.
+	 * @return The built {@link Circle} model.
+	 */
 	private @Nonnull Circle buildWirePin(@Nonnull Point p, boolean isStart) {
 		final Circle circle = new Circle();
 		circle.setCenterX(p.getX());
@@ -163,15 +281,8 @@ public class Wire extends Parent implements Evaluable {
 		});
 		circle.setOnMouseDragged(me -> {
 			final Point newPos = Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE);
-			circle.setCenterX(newPos.getX());
-			circle.setCenterY(newPos.getY());
-			if (isStart) {
-				line.setStartX(newPos.getX());
-				line.setStartY(newPos.getY());
-			} else {
-				line.setEndX(newPos.getX());
-				line.setEndY(newPos.getY());
-			}
+			if (isStart) setStart(newPos);
+			else setEnd(newPos);
 			final Optional<ConnectablePin> pinOptional = isPinAtPoint(newPos);
 			pinOptional.ifPresent(pin -> {
 				if (isStart && endPin != null) connect(pin, endPin);
@@ -181,16 +292,13 @@ public class Wire extends Parent implements Evaluable {
 		return circle;
 	}
 
+	/**
+	 * Builds the {@link ContextMenu} for this wire.
+	 *
+	 * @return The built {@link ContextMenu}.
+	 */
 	@Nonnull
-	private Line buildLine(@Nonnull Point start, @Nonnull Point end) {
-		final Line line = new Line(start.getX(), start.getY(), end.getX(), end.getY());
-		line.setStrokeWidth(3);
-		line.setStroke(Color.BLACK);
-		return line;
-	}
-
-	@Nonnull
-	private ContextMenu buildDefaultContextMenu() {
+	private ContextMenu buildContextMenu() {
 		final ContextMenu contextMenu = new ContextMenu();
 		final MenuItem deleteItem = new MenuItem("Delete Wire");
 		deleteItem.setOnAction(e -> disconnect());

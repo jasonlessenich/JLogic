@@ -1,8 +1,8 @@
-package dev.jasonlessenich.jlogic.objects.pins.layout_strategies;
+package dev.jasonlessenich.jlogic.objects.pins.layout;
 
 import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
-import dev.jasonlessenich.jlogic.objects.pins.naming_strategies.PinNamingStrategy;
+import dev.jasonlessenich.jlogic.objects.pins.naming.PinNamingStrategy;
 import dev.jasonlessenich.jlogic.utils.Point;
 
 import javax.annotation.Nonnull;
@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class IOLayoutStrategy implements PinLayoutStrategy {
-	protected IOLayoutStrategy() {
+public class IOPinLayoutStrategy implements PinLayoutStrategy {
+	protected IOPinLayoutStrategy() {
 	}
 
 	@Override

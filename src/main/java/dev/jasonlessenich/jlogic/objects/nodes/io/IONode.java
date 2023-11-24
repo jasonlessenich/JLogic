@@ -1,8 +1,8 @@
 package dev.jasonlessenich.jlogic.objects.nodes.io;
 
 import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
-import dev.jasonlessenich.jlogic.objects.pins.layout_strategies.PinLayoutStrategy;
-import dev.jasonlessenich.jlogic.objects.pins.naming_strategies.PinNamingStrategy;
+import dev.jasonlessenich.jlogic.objects.pins.layout.PinLayoutStrategy;
+import dev.jasonlessenich.jlogic.objects.pins.naming.PinNamingStrategy;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.paint.Color;
 import lombok.Getter;

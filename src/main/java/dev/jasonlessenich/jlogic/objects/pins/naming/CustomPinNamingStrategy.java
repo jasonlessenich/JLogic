@@ -1,15 +1,15 @@
-package dev.jasonlessenich.jlogic.objects.pins.naming_strategies;
+package dev.jasonlessenich.jlogic.objects.pins.naming;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class CustomNamingStrategy implements PinNamingStrategy {
+public class CustomPinNamingStrategy implements PinNamingStrategy {
 	@Nonnull
 	private final List<String> customNames;
 	@Nonnull
 	private final PinNamingStrategy fallbackStrategy;
 
-	public CustomNamingStrategy(
+	public CustomPinNamingStrategy(
 			@Nonnull List<String> customNames,
 			@Nonnull PinNamingStrategy fallbackStrategy
 	) {

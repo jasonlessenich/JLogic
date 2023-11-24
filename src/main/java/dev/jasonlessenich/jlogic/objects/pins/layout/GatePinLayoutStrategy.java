@@ -1,8 +1,8 @@
-package dev.jasonlessenich.jlogic.objects.pins.layout_strategies;
+package dev.jasonlessenich.jlogic.objects.pins.layout;
 
 import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
-import dev.jasonlessenich.jlogic.objects.pins.naming_strategies.PinNamingStrategy;
+import dev.jasonlessenich.jlogic.objects.pins.naming.PinNamingStrategy;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.text.Text;
@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GateLayoutStrategy implements PinLayoutStrategy {
-	protected GateLayoutStrategy() {
+public class GatePinLayoutStrategy implements PinLayoutStrategy {
+	protected GatePinLayoutStrategy() {
 	}
 
 	@Override

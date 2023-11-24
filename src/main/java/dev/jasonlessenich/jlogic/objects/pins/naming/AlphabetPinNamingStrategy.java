@@ -1,9 +1,9 @@
-package dev.jasonlessenich.jlogic.objects.pins.naming_strategies;
+package dev.jasonlessenich.jlogic.objects.pins.naming;
 
-public class AlphabetNamingStrategy implements PinNamingStrategy {
+public class AlphabetPinNamingStrategy implements PinNamingStrategy {
 	private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 
-	protected AlphabetNamingStrategy() {
+	protected AlphabetPinNamingStrategy() {
 	}
 
 	@Override

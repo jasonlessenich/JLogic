@@ -2,8 +2,8 @@ package dev.jasonlessenich.jlogic.objects.nodes.gates;
 
 import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
-import dev.jasonlessenich.jlogic.objects.pins.layout_strategies.PinLayoutStrategy;
-import dev.jasonlessenich.jlogic.objects.pins.naming_strategies.PinNamingStrategy;
+import dev.jasonlessenich.jlogic.objects.pins.layout.PinLayoutStrategy;
+import dev.jasonlessenich.jlogic.objects.pins.naming.PinNamingStrategy;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.NodeUtils;
 import dev.jasonlessenich.jlogic.utils.Point;
