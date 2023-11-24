@@ -1,0 +1,15 @@
+{
+  "name": "Splitter",
+  "symbol": "*",
+  "namingStrategy": "ALPHABET",
+  "tables": [
+    {
+      "inputCount": 1,
+      "outputCount": 2,
+      "definition": {
+        "0": [false, false],
+        "1": [true, true]
+      }
+    }
+  ]
+}

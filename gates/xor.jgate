@@ -1,6 +1,6 @@
 {
-  "name": "OR",
-  "symbol": ">=1",
+  "name": "XOR",
+  "symbol": "=1",
   "namingStrategy": "ALPHABET",
   "tables": [
     {
@@ -10,7 +10,7 @@
         "00": [false],
         "01": [true],
         "10": [true],
-        "11": [true]
+        "11": [false]
       }
     }
   ]

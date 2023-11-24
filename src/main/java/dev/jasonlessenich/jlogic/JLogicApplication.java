@@ -1,6 +1,6 @@
 package dev.jasonlessenich.jlogic;
 
-import dev.jasonlessenich.jlogic.nodes.gates.loader.JGateManager;
+import dev.jasonlessenich.jlogic.objects.nodes.gates.custom.JGateManager;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import javafx.application.Application;
 import javafx.stage.Stage;
