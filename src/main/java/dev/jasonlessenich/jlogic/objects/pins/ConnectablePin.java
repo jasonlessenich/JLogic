@@ -29,16 +29,14 @@ public class ConnectablePin extends Parent {
 	private final Type type;
 	@Getter
 	private final ConnectableNode node;
+	private final Circle model;
 	@Getter
 	@Setter
 	private Point displacement;
 	@Getter
 	private boolean active;
-
 	@Nullable
 	private Wire wire;
-
-	private final Circle model;
 
 	public ConnectablePin(
 			@Nonnull String name,
@@ -94,12 +92,12 @@ public class ConnectablePin extends Parent {
 				.addY(displacement.getY() + node.getModel().getMaxHeight() / 2);
 	}
 
-	public void setConnectedWire(@Nullable Wire wire) {
-		this.wire = wire;
-	}
-
 	public Optional<Wire> getConnectedWire() {
 		return Optional.ofNullable(wire);
+	}
+
+	public void setConnectedWire(@Nullable Wire wire) {
+		this.wire = wire;
 	}
 
 	public boolean canConnectTo(@Nonnull ConnectablePin pin) {

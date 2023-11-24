@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 public class IOLayoutStrategy implements PinLayoutStrategy {
-	protected IOLayoutStrategy() {}
+	protected IOLayoutStrategy() {
+	}
 
 	@Override
 	public Map<ConnectablePin.Type, List<ConnectablePin>> layoutPins(

@@ -2,7 +2,6 @@ package dev.jasonlessenich.jlogic.objects.wires;
 
 import dev.jasonlessenich.jlogic.controller.MainController;
 import dev.jasonlessenich.jlogic.objects.Connection;
-import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.nodes.Evaluable;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.utils.Constants;
@@ -24,27 +23,24 @@ import java.util.Optional;
 @Slf4j
 public class Wire extends Parent implements Evaluable {
 	private static final Color PIN_FILL = Color.WHITE;
-
-	@Nonnull
-	@Getter
-	private Point start;
-	@Nonnull
-	@Getter
-	private Point end;
-
-	@Nullable
-	@Getter
-	private ConnectablePin startPin;
-	@Nullable
-	@Getter
-	private ConnectablePin endPin;
-
 	/* MODEL */
 	private final Line line;
 	@Nullable
 	private final Circle startCircle;
 	@Nullable
 	private final Circle endCircle;
+	@Nonnull
+	@Getter
+	private Point start;
+	@Nonnull
+	@Getter
+	private Point end;
+	@Nullable
+	@Getter
+	private ConnectablePin startPin;
+	@Nullable
+	@Getter
+	private ConnectablePin endPin;
 
 	public Wire(
 			@Nonnull Point start,

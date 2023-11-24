@@ -5,7 +5,8 @@ import javafx.scene.layout.Region;
 import javax.annotation.Nonnull;
 
 public class NodeUtils {
-	private NodeUtils() {}
+	private NodeUtils() {
+	}
 
 	public static Region setSize(@Nonnull Region node, double width, double height) {
 		node.setMaxWidth(width);

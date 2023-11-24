@@ -1,7 +1,5 @@
 package dev.jasonlessenich.jlogic.objects.nodes;
 
-import lombok.Getter;
-
 import javax.annotation.Nonnull;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -14,6 +12,7 @@ public class NodeState implements PropertyChangeListener {
 	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private final int outputCount;
 	private final Consumer<boolean[]> activeChangedListener;
+	private boolean[] active;
 
 	public NodeState(int outputCount, @Nonnull Consumer<boolean[]> activeChangedListener) {
 		this.outputCount = outputCount;
@@ -21,18 +20,9 @@ public class NodeState implements PropertyChangeListener {
 		pcs.addPropertyChangeListener(this);
 	}
 
-	private boolean[] active;
-
 	public boolean[] getActive() {
 		if (active == null)
 			return new boolean[outputCount];
-		return active;
-	}
-
-	public List<Boolean> getActiveAsList() {
-		final List<Boolean> active = new ArrayList<>();
-		for (boolean b : getActive())
-			active.add(b);
 		return active;
 	}
 
@@ -40,6 +30,13 @@ public class NodeState implements PropertyChangeListener {
 		final boolean[] old = this.active;
 		this.active = active;
 		pcs.firePropertyChange("active", old, active);
+	}
+
+	public List<Boolean> getActiveAsList() {
+		final List<Boolean> active = new ArrayList<>();
+		for (boolean b : getActive())
+			active.add(b);
+		return active;
 	}
 
 	@Override

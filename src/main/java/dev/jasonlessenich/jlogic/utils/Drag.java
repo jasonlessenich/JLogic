@@ -23,9 +23,9 @@ public class Drag {
 	@Nullable
 	private final Consumer<Point> onDrag;
 	@Nullable
-	private Predicate<Node> canDrag;
-	@Nullable
 	private final Integer step;
+	@Nullable
+	private final Predicate<Node> canDrag;
 
 	private Drag(
 			@Nonnull Node node,
