@@ -21,10 +21,8 @@ public class InputNode extends IONode {
 		final EventHandler<? super MouseEvent> onMousePressed = getOnMousePressed();
 		setOnMousePressed(me -> {
 			onMousePressed.handle(me);
-			if (MainController.simulationMode && me.isPrimaryButtonDown()) {
+			if (MainController.simulationMode && me.isPrimaryButtonDown())
 				toggleActivated();
-				// TODO: evaluate circuit
-			}
 		});
 	}
 
@@ -33,6 +31,12 @@ public class InputNode extends IONode {
 		if (circleModel != null) {
 			circleModel.setFill(color);
 		}
+	}
+
+	@Override
+	public void toggleActivated() {
+		super.toggleActivated();
+		getOutputPins().forEach(p -> p.setState(isActive()));
 	}
 
 	@Override

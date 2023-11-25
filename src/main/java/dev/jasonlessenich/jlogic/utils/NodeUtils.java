@@ -17,8 +17,8 @@ public class NodeUtils {
 	/**
 	 * Sets min and max width and height of a {@link Region}.
 	 *
-	 * @param node The {@link Region}.
-	 * @param width The width.
+	 * @param node   The {@link Region}.
+	 * @param width  The width.
 	 * @param height The height.
 	 * @return The {@link Region}.
 	 */

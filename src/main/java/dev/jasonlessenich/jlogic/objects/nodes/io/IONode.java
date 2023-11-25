@@ -11,19 +11,16 @@ import javax.annotation.Nonnull;
 
 @Getter
 public abstract class IONode extends ConnectableNode {
+	protected boolean active = false;
+
 	public IONode(@Nonnull Point point, int inputCount, int outputCount) {
 		super(point, PinLayoutStrategy.IO, PinNamingStrategy.INDEX, inputCount, outputCount);
 	}
 
 	protected abstract void setFill(Color color);
 
-	@Override
-	public void setState(boolean[] activated) {
-		super.setState(activated);
-		setFill(activated[0] ? Color.LAWNGREEN : Color.RED);
-	}
-
 	public void toggleActivated() {
-		setState(new boolean[]{!getState().getActive()[0]});
+		active = !active;
+		setFill(active ? Color.LAWNGREEN : Color.RED);
 	}
 }

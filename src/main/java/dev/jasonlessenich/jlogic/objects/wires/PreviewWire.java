@@ -41,8 +41,8 @@ public class PreviewWire extends Parent {
 	 * start and end points, and start and end {@link ConnectablePin}s.
 	 *
 	 * @param layoutStrategy The {@link WireLayoutStrategy} to use to lay out the wire.
-	 * @param start The start point of the wire.
-	 * @param end The end point of the wire.
+	 * @param start          The start point of the wire.
+	 * @param end            The end point of the wire.
 	 */
 	public PreviewWire(
 			@Nonnull WireLayoutStrategy layoutStrategy,
@@ -72,7 +72,7 @@ public class PreviewWire extends Parent {
 	 * Redraws the lines of this wire using the given {@link WireLayoutStrategy}.
 	 *
 	 * @param start The start point of the wire.
-	 * @param end The end point of the wire.
+	 * @param end   The end point of the wire.
 	 * @return The new lines.
 	 */
 	private List<Line> redrawLines(Point start, Point end) {

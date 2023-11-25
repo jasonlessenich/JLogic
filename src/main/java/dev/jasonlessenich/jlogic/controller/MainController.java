@@ -56,7 +56,7 @@ public class MainController {
 
 	private void addConnectable(@Nonnull ConnectableNode node) {
 		mainPane.getChildren().add(node);
-		node.evaluate(0);
+		node.evaluate();
 	}
 
 	private @Nonnull ContextMenu buildPaneContextMenu() {

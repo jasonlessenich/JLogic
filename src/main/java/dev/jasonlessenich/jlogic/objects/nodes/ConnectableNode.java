@@ -1,9 +1,7 @@
 package dev.jasonlessenich.jlogic.objects.nodes;
 
 import dev.jasonlessenich.jlogic.controller.MainController;
-import dev.jasonlessenich.jlogic.objects.Connection;
-import dev.jasonlessenich.jlogic.objects.nodes.gates.CustomGateNode;
-import dev.jasonlessenich.jlogic.objects.nodes.gates.GateNode;
+import dev.jasonlessenich.jlogic.objects.nodes.io.OutputNode;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.objects.pins.layout.PinLayoutStrategy;
 import dev.jasonlessenich.jlogic.objects.pins.naming.PinNamingStrategy;
@@ -18,17 +16,12 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 @Getter
 @Slf4j
 public abstract class ConnectableNode extends StackPane {
-	private final NodeState state;
-	private final List<Connection> connections;
 	private final Map<ConnectablePin.Type, List<ConnectablePin>> pins;
 	private final int inputCount;
 	private final int outputCount;
@@ -43,8 +36,6 @@ public abstract class ConnectableNode extends StackPane {
 			int inputCount,
 			int outputCount
 	) {
-		this.state = new NodeState(outputCount, this::handleStateChange);
-		this.connections = new ArrayList<>();
 		this.inputCount = inputCount;
 		this.outputCount = outputCount;
 		this.drag = new Drag.Builder(this)
@@ -83,10 +74,6 @@ public abstract class ConnectableNode extends StackPane {
 		return Point.of(getLayoutX(), getLayoutY());
 	}
 
-	public void setState(boolean... active) {
-		getState().setActive(active);
-	}
-
 	@Nonnull
 	public List<ConnectablePin> getInputPins() {
 		return getPins().getOrDefault(ConnectablePin.Type.INPUT, List.of());
@@ -97,38 +84,20 @@ public abstract class ConnectableNode extends StackPane {
 		return getPins().getOrDefault(ConnectablePin.Type.OUTPUT, List.of());
 	}
 
-	public List<Connection> getSourceConnections() {
-		return connections.stream().filter(c -> c.getConnectionType() == Connection.Type.BACKWARD).toList();
-	}
-
-	public List<Connection> getTargetConnections() {
-		return connections.stream().filter(c -> c.getConnectionType() == Connection.Type.FORWARD).toList();
-	}
-
-	public void evaluate(int delayMillis) {
-		if (this instanceof Evaluable eval) {
-			final List<Boolean> input = getInputPins().stream()
-					.map(ConnectablePin::isActive)
-					.toList();
-			final boolean[] result = eval.evaluate(input);
-			log.debug("Notified {} of state change with input: {} ({} -> {})", this, input, getState().getActive(), result);
-			CompletableFuture.delayedExecutor(delayMillis, TimeUnit.MILLISECONDS)
-					.execute(() -> setState(result));
-		}
-	}
-
-	private void handleStateChange(boolean[] state) {
-		// update output pins
-		final List<ConnectablePin> outputPins = getOutputPins();
-		for (int i = 0; i < outputPins.size(); i++) {
-			final ConnectablePin pin = outputPins.get(i);
-			pin.setState(state[i]);
-		}
-		for (Connection con : getTargetConnections()) {
-			final ConnectableNode node = con.getConnectionTo().getNode();
-			final int delay = node instanceof GateNode gate &&
-					!(node instanceof CustomGateNode c && c.getSymbol().equals("*")) ? gate.getSpecificGateDelay() : 0;
-			node.evaluate(delay);
+	public void evaluate() {
+		if (!(this instanceof Evaluable eval)) return;
+		final List<Boolean> input = getInputPins().stream()
+				.map(ConnectablePin::isActive)
+				.toList();
+		final boolean[] result = eval.evaluate(input);
+		log.info("Evaluated {}: {} => {}", this, input, result);
+		if (this instanceof OutputNode out) {
+			out.setActive(result[0]);
+		} else {
+			final List<ConnectablePin> outputPins = getOutputPins();
+			for (int i = 0; i < outputPins.size(); i++) {
+				outputPins.get(i).setState(result[i]);
+			}
 		}
 	}
 

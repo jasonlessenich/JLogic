@@ -19,6 +19,11 @@ public class OutputNode extends IONode implements Evaluable {
 		super(point, 1, 0);
 	}
 
+	public void setActive(boolean active) {
+		this.active = active;
+		setFill(active ? Color.LAWNGREEN : Color.RED);
+	}
+
 	@Override
 	protected void setFill(Color color) {
 		if (circleModel != null) {

@@ -2,7 +2,6 @@ package dev.jasonlessenich.jlogic.objects.wires.layout;
 
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.util.Pair;
 
@@ -14,7 +13,15 @@ import java.util.function.BiFunction;
  * An implementation of {@link WireLayoutStrategy} that lays out a wire only in straight lines.
  */
 public class StraightWireLayoutStrategy implements WireLayoutStrategy {
-	protected StraightWireLayoutStrategy() {}
+	/**
+	 * Whether to use the full width between the start and end points.
+	 * Normally, the wire is laid out in three lines, with the first and last lines being half the width.
+	 */
+	private final boolean firstYThenX;
+
+	protected StraightWireLayoutStrategy(boolean firstYThenX) {
+		this.firstYThenX = firstYThenX;
+	}
 
 	@Override
 	public List<Line> layoutWire(Point start, Point end, BiFunction<Point, Point, Line> modelFunction) {
@@ -28,7 +35,7 @@ public class StraightWireLayoutStrategy implements WireLayoutStrategy {
 	 * as it is already one-dimensional.
 	 *
 	 * @param start The start {@link Point}.
-	 * @param end The end {@link Point}.
+	 * @param end   The end {@link Point}.
 	 * @return An unmodifiable {@link List} of {@link Pair}s that contain the start and end {@link Point}s of each line.
 	 */
 	@Nonnull
@@ -37,6 +44,10 @@ public class StraightWireLayoutStrategy implements WireLayoutStrategy {
 		final double yLength = end.getY() - start.getY();
 		if (xLength == 0 || yLength == 0) {
 			return List.of(new Pair<>(start, end));
+		}
+		if (firstYThenX) {
+			final Point first = Point.of(start.getX(), start.getY() + yLength);
+			return List.of(new Pair<>(start, first), new Pair<>(first, end));
 		}
 		if (Math.abs(xLength) < Constants.GRID_STEP_SIZE * 3) {
 			final Point first = Point.of(start.getX() + xLength, start.getY());

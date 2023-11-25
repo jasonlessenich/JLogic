@@ -1,7 +1,6 @@
 package dev.jasonlessenich.jlogic.objects.pins;
 
 import dev.jasonlessenich.jlogic.controller.MainController;
-import dev.jasonlessenich.jlogic.objects.Connection;
 import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.wires.PreviewWire;
 import dev.jasonlessenich.jlogic.objects.wires.Wire;
@@ -18,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -78,31 +76,38 @@ public class ConnectablePin extends Parent {
 			final Wire wire = type == Type.OUTPUT
 					? new Wire(start, end, this, endPin)
 					: new Wire(end, start, endPin, this);
-			if (endPin != null)
+			if (endPin != null) {
 				wire.connect(this, endPin);
+			}
 			this.wire = wire;
 			MainController.MAIN_PANE.getChildren().add(wire);
 		});
 		setOnDragDetected(e -> startFullDrag());
 	}
 
+	/**
+	 * Sets the {@link ConnectablePin}s state.
+	 * This updates the pins color, the connected {@link Wire}s state all other connected {@link ConnectablePin}s.
+	 *
+	 * @param active Whether the pin should be active or not.
+	 */
 	public void setState(boolean active) {
 		this.active = active;
 		model.setFill(active ? Color.LAWNGREEN : DEFAULT_COLOR);
-		if (getConnectedWire().isPresent()) {
-			final Wire w = getConnectedWire().get();
-			// update wire state
-			w.setActivated(active);
-			// update wire pins
-			if (type == Type.INPUT && w.getStartPin() != null
-					&& w.getStartPin().isActive() != active)
-				w.getStartPin().setState(active);
-			if (type == Type.OUTPUT && w.getEndPin() != null
-					&& w.getEndPin().isActive() != active)
-				w.getEndPin().setState(active);
+		if (getConnectedWire().isEmpty()) return;
+		switch (type) {
+			case INPUT -> node.evaluate();
+			case OUTPUT -> getConnectedWire().get().setActivated(active);
 		}
 	}
 
+	/**
+	 * Gets the {@link ConnectablePin}s position in the {@link MainController#MAIN_PANE}.
+	 * This simply gets the parent's position and adds the {@link ConnectablePin}s displacement.
+	 * (Calculated by {@link dev.jasonlessenich.jlogic.objects.pins.layout.PinLayoutStrategy})
+	 *
+	 * @return The {@link ConnectablePin}s position, as a {@link Point}.
+	 */
 	public Point getPinPosition() {
 		return node.getPosition()
 				.addX(displacement.getX() + node.getModel().getMaxWidth() / 2)
@@ -118,9 +123,7 @@ public class ConnectablePin extends Parent {
 	}
 
 	public boolean canConnectTo(@Nonnull ConnectablePin pin) {
-		return node.getConnections().stream().noneMatch(c -> Objects.equals(c, new Connection(this, pin, Connection.Type.FORWARD))) &&
-				(node.getTargetConnections().size() < node.getOutputCount()) &&
-				(pin.getNode().getSourceConnections().size() < pin.getNode().getInputCount());
+		return true;
 	}
 
 	private @Nonnull Circle buildModel() {
