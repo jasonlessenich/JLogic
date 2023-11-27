@@ -12,6 +12,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +41,9 @@ public class Wire extends Parent {
 	 */
 	@Getter
 	private final List<Wire> wires;
+	// TODO: docs
+	@Nullable
+	private final Circle intersectionCircle;
 	/**
 	 * The circle at the start of the wire if there is no {@link ConnectablePin}.
 	 */
@@ -82,45 +86,33 @@ public class Wire extends Parent {
 	@Getter
 	private boolean activated;
 
-	/**
-	 * Constructs a new {@link Wire} with the given {@link WireLayoutStrategy},
-	 * start and end points, and start and end {@link ConnectablePin}s.
-	 *
-	 * @param layoutStrategy The {@link WireLayoutStrategy} to use to lay out the wire.
-	 * @param start          The start point of the wire.
-	 * @param end            The end point of the wire.
-	 * @param startPin       A nullable {@link ConnectablePin} that this wire is connected to.
-	 * @param endPin         A nullable {@link ConnectablePin} that this wire is connected to.
-	 */
-	public Wire(
+	// TODO: docs
+	private Wire(
 			@Nonnull WireLayoutStrategy layoutStrategy,
 			@Nonnull Point start,
 			@Nonnull Point end,
+			@Nullable Wire wire,
 			@Nullable ConnectablePin startPin,
 			@Nullable ConnectablePin endPin
 	) {
+		if (wire != null && startPin != null) {
+			throw new IllegalArgumentException("Cannot have both a wire and a start pin!");
+		}
 		setId("Wire");
 		this.layoutStrategy = layoutStrategy;
 		this.start = start;
 		this.end = end;
 		this.wires = new ArrayList<>();
 		this.lines = redrawLines(start, end);
+		// build intersection circle
+		this.intersectionCircle = wire != null ? add(buildIntersection(start)) : null;
 		// build start pin
 		this.startPin = startPin;
-		if (startPin == null) {
-			this.startCircle = buildWirePin(start, true);
-			getChildren().add(startCircle);
-		} else {
-			this.startCircle = null;
-		}
+		this.startCircle = startPin == null && intersectionCircle == null ? add(buildWirePin(start, true)) : null;
 		// build end pin
 		this.endPin = endPin;
-		if (endPin == null) {
-			this.endCircle = buildWirePin(end, false);
-			getChildren().add(endCircle);
-		} else {
-			this.endCircle = null;
-		}
+		this.endCircle = endPin == null ? add(buildWirePin(end, false)) : null;
+		// build context menu
 		final ContextMenu contextMenu = buildContextMenu();
 		setOnMousePressed(me -> {
 			if (me.isSecondaryButtonDown()) {
@@ -131,23 +123,14 @@ public class Wire extends Parent {
 		});
 	}
 
-	/**
-	 * Constructs a new {@link Wire} with the given start and end points,
-	 * and start and end {@link ConnectablePin}s.
-	 * This defaults to using the {@link WireLayoutStrategy#STRAIGHT} layout strategy.
-	 *
-	 * @param start    The start point of the wire.
-	 * @param end      The end point of the wire.
-	 * @param startPin A nullable {@link ConnectablePin} that this wire is connected to.
-	 * @param endPin   A nullable {@link ConnectablePin} that this wire is connected to.
-	 */
+	// TODO: docs
 	public Wire(
 			@Nonnull Point start,
 			@Nonnull Point end,
-			@Nullable ConnectablePin startPin,
+			@Nonnull ConnectablePin startPin,
 			@Nullable ConnectablePin endPin
 	) {
-		this(WireLayoutStrategy.STRAIGHT, start, end, startPin, endPin);
+		this(WireLayoutStrategy.STRAIGHT, start, end, null, startPin, endPin);
 	}
 
 	// TODO: docs
@@ -158,31 +141,7 @@ public class Wire extends Parent {
 			@Nonnull Wire wire,
 			@Nullable ConnectablePin endPin
 	) {
-		setId("Wire");
-		this.layoutStrategy = layoutStrategy;
-		this.start = start;
-		this.end = end;
-		this.wires = new ArrayList<>();
-		this.lines = redrawLines(start, end);
-		// don't draw pins, as we're connected to another wire
-		this.startPin = null;
-		this.startCircle = null;
-		// build end pin
-		this.endPin = endPin;
-		if (endPin == null) {
-			this.endCircle = buildWirePin(end, false);
-			getChildren().add(endCircle);
-		} else {
-			this.endCircle = null;
-		}
-		final ContextMenu contextMenu = buildContextMenu();
-		setOnMousePressed(me -> {
-			if (me.isSecondaryButtonDown()) {
-				contextMenu.show(this, me.getScreenX(), me.getScreenY());
-			} else {
-				contextMenu.hide();
-			}
-		});
+		this(layoutStrategy, start, end, wire, null, endPin);
 	}
 
 	/**
@@ -200,6 +159,9 @@ public class Wire extends Parent {
 		}
 		if (getEndPin() != null) {
 			getEndPin().setState(activated);
+		}
+		if (intersectionCircle != null) {
+			intersectionCircle.setFill(activated ? Color.LIMEGREEN : Color.BLACK);
 		}
 	}
 
@@ -325,6 +287,11 @@ public class Wire extends Parent {
 		setOnDragDetected(e -> startFullDrag());
 	}
 
+	private <T extends Shape> T add(T node) {
+		getChildren().add(node);
+		return node;
+	}
+
 	/**
 	 * Builds a single, draggable {@link Circle} that acts as a placeholder for a {@link ConnectablePin}.
 	 *
@@ -356,6 +323,15 @@ public class Wire extends Parent {
 				if (!isStart && startPin != null) connect(startPin, pin);
 			});
 		});
+		return circle;
+	}
+
+	private @Nonnull Circle buildIntersection(@Nonnull Point p) {
+		final Circle circle = new Circle();
+		circle.setCenterX(p.getX());
+		circle.setCenterY(p.getY());
+		circle.setRadius((double) Constants.PIN_SIZE / 3);
+		circle.setFill(activated ? Color.LIMEGREEN : Color.BLACK);
 		return circle;
 	}
 
