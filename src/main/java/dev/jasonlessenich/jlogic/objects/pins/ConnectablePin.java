@@ -2,6 +2,7 @@ package dev.jasonlessenich.jlogic.objects.pins;
 
 import dev.jasonlessenich.jlogic.controller.MainController;
 import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
+import dev.jasonlessenich.jlogic.objects.nodes.gates.GateNode;
 import dev.jasonlessenich.jlogic.objects.wires.PreviewWire;
 import dev.jasonlessenich.jlogic.objects.wires.Wire;
 import dev.jasonlessenich.jlogic.objects.wires.layout.WireLayoutStrategy;
@@ -18,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class ConnectablePin extends Parent {
@@ -96,7 +99,9 @@ public class ConnectablePin extends Parent {
 		model.setFill(active ? Color.LAWNGREEN : DEFAULT_COLOR);
 		if (getConnectedWire().isEmpty()) return;
 		switch (type) {
-			case INPUT -> node.evaluate();
+			case INPUT -> CompletableFuture
+					.delayedExecutor(getNode() instanceof GateNode gate ? gate.getSpecificGateDelay() : 0, TimeUnit.MILLISECONDS)
+					.execute(node::evaluate);
 			case OUTPUT -> getConnectedWire().get().setActivated(active);
 		}
 	}
