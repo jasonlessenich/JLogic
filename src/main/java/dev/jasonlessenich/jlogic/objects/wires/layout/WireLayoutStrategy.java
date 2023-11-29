@@ -1,10 +1,7 @@
 package dev.jasonlessenich.jlogic.objects.wires.layout;
 
 import dev.jasonlessenich.jlogic.utils.Point;
-import javafx.scene.shape.Line;
-
-import java.util.List;
-import java.util.function.BiFunction;
+import javafx.scene.shape.Path;
 
 /**
  * An interface representing a strategy for laying out a wire.
@@ -15,11 +12,11 @@ public interface WireLayoutStrategy {
 	WireLayoutStrategy STRAIGHT_FIRST_Y = new StraightWireLayoutStrategy(true);
 
 	/**
-	 * Lays out a set of {@link Line lines} that make up the model of a wire.
+	 * Lays out a {@link Path} that makes up the model of a wire.
 	 *
 	 * @param start The start {@link Point}.
 	 * @param end   The end {@link Point}.
-	 * @return A {@link List} of {@link Line}s.
+	 * @return The {@link Path}.
 	 */
-	List<Line> layoutWire(Point start, Point end, BiFunction<Point, Point, Line> modelFunction);
+	Path layoutWire(Point start, Point end);
 }

@@ -5,12 +5,11 @@ import dev.jasonlessenich.jlogic.objects.wires.layout.WireLayoutStrategy;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.Parent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.Path;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 @Slf4j
 public class PreviewWire extends Parent {
@@ -32,9 +31,9 @@ public class PreviewWire extends Parent {
 	private final Point end;
 
 	/**
-	 * The lines that make up this wire.
+	 * The {@link Path} that makes up this wire.
 	 */
-	private List<Line> lines;
+	private Path path;
 
 	/**
 	 * Constructs a new {@link PreviewWire} with the given {@link WireLayoutStrategy},
@@ -53,7 +52,7 @@ public class PreviewWire extends Parent {
 		this.layoutStrategy = layoutStrategy;
 		this.start = start;
 		this.end = end;
-		this.lines = redrawLines(start, end);
+		this.path = redrawLines(start, end);
 	}
 
 	/**
@@ -62,10 +61,8 @@ public class PreviewWire extends Parent {
 	 * @param canConnect True if the wire can connect, false otherwise.
 	 */
 	public void setCanConnect(boolean canConnect) {
-		lines.forEach(l -> {
-			if (canConnect) l.getStrokeDashArray().clear();
-			else l.getStrokeDashArray().addAll(5d, 5d);
-		});
+		if (canConnect) path.getStrokeDashArray().clear();
+		else path.getStrokeDashArray().addAll(5d, 5d);
 	}
 
 	/**
@@ -75,15 +72,12 @@ public class PreviewWire extends Parent {
 	 * @param end   The end point of the wire.
 	 * @return The new lines.
 	 */
-	private List<Line> redrawLines(Point start, Point end) {
-		getChildren().removeIf(n -> n instanceof Line);
-		this.lines = layoutStrategy.layoutWire(start, end, (from, to) -> {
-			final Line line = new Line(from.getX(), from.getY(), to.getX(), to.getY());
-			line.setStrokeWidth(2);
-			line.setStroke(Color.BLUE);
-			return line;
-		});
-		getChildren().addAll(lines);
-		return lines;
+	private Path redrawLines(Point start, Point end) {
+		getChildren().removeIf(n -> n instanceof Path);
+		this.path = layoutStrategy.layoutWire(start, end);
+		path.setStrokeWidth(2);
+		path.setStroke(Color.BLUE);
+		getChildren().add(path);
+		return path;
 	}
 }

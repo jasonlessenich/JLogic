@@ -12,7 +12,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.Shape;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -78,9 +78,9 @@ public class Wire extends Parent {
 	@Getter
 	private ConnectablePin endPin;
 	/**
-	 * The lines that make up this wire.
+	 * The {@link Path} that makes up this wire.
 	 */
-	private List<Line> lines;
+	private Path path;
 	/**
 	 * Whether this wire is activated.
 	 */
@@ -104,7 +104,7 @@ public class Wire extends Parent {
 		this.start = start;
 		this.end = end;
 		this.wires = new ArrayList<>();
-		this.lines = redrawLines(start, end);
+		this.path = redrawLines(start, end);
 		// build intersection circle
 		this.intersectionCircle = wire != null ? add(buildIntersection(start)) : null;
 		// build start pin
@@ -146,7 +146,7 @@ public class Wire extends Parent {
 	 */
 	public void setActivated(boolean activated) {
 		this.activated = activated;
-		lines.forEach(l -> l.setStroke(activated ? Color.LIMEGREEN : Color.BLACK));
+		path.setStroke(activated ? Color.LIMEGREEN : Color.BLACK);
 		for (Wire wire : wires) {
 			if (wire == this || wire.isActivated() == activated) continue;
 			wire.setActivated(activated);
@@ -234,28 +234,26 @@ public class Wire extends Parent {
 	 * @param end   The end point of the wire.
 	 * @return The new lines.
 	 */
-	private List<Line> redrawLines(Point start, Point end) {
-		getChildren().removeIf(n -> n instanceof Line);
-		this.lines = layoutStrategy.layoutWire(start, end, (from, to) -> {
-			final Line line = new Line(from.getX(), from.getY(), to.getX(), to.getY());
-			line.setStrokeWidth(3);
-			line.setStroke(Color.BLACK);
-			return line;
-		});
-		lines.forEach(this::addEventListeners);
+	@Nonnull
+	private Path redrawLines(Point start, Point end) {
+		getChildren().removeIf(n -> n instanceof Path);
+		this.path = layoutStrategy.layoutWire(start, end);
+		path.setStrokeWidth(3);
+		path.setStroke(Color.BLACK);
+		addEventListeners(path);
 		setActivated(this.activated);
-		getChildren().addAll(lines);
-		return lines;
+		getChildren().add(path);
+		return path;
 	}
 
 	// TODO: docs
-	private void addEventListeners(@Nonnull Line line) {
+	private void addEventListeners(@Nonnull Path path) {
 		final Point start = new Point();
-		line.setOnMousePressed(me -> {
+		path.setOnMousePressed(me -> {
 			start.setX(me.getSceneX());
 			start.setY(me.getSceneY());
 		});
-		line.setOnMouseDragged(me -> {
+		path.setOnMouseDragged(me -> {
 			if (!me.isPrimaryButtonDown()) return;
 			// clear old wire
 			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof PreviewWire);
@@ -265,7 +263,7 @@ public class Wire extends Parent {
 			// add new wire at mouse pos
 			MainController.MAIN_PANE.getChildren().add(wire);
 		});
-		line.setOnMouseReleased(me -> {
+		path.setOnMouseReleased(me -> {
 			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof PreviewWire);
 			final ConnectablePin endPin = NodeUtils.isPinAtPoint(end)
 					.orElse(null);
