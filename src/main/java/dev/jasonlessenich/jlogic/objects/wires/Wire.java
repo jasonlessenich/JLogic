@@ -4,6 +4,7 @@ import dev.jasonlessenich.jlogic.controller.MainController;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.objects.wires.layout.WireLayoutStrategy;
 import dev.jasonlessenich.jlogic.utils.Constants;
+import dev.jasonlessenich.jlogic.utils.ContextMenuUtils;
 import dev.jasonlessenich.jlogic.utils.NodeUtils;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.scene.Parent;
@@ -113,14 +114,7 @@ public class Wire extends Parent {
 		this.endPin = endPin;
 		this.endCircle = endPin == null ? add(buildWirePin(end, false)) : null;
 		// build context menu
-		final ContextMenu contextMenu = buildContextMenu();
-		setOnMousePressed(me -> {
-			if (me.isSecondaryButtonDown()) {
-				contextMenu.show(this, me.getScreenX(), me.getScreenY());
-			} else {
-				contextMenu.hide();
-			}
-		});
+		ContextMenuUtils.register(this, buildContextMenu());
 	}
 
 	// TODO: docs
@@ -157,7 +151,7 @@ public class Wire extends Parent {
 			if (wire == this || wire.isActivated() == activated) continue;
 			wire.setActivated(activated);
 		}
-		if (getEndPin() != null) {
+		if (getEndPin() != null && getEndPin().isActive() != activated) {
 			getEndPin().setState(activated);
 		}
 		if (intersectionCircle != null) {
