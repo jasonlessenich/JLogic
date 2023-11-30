@@ -224,7 +224,7 @@ public class Wire extends Parent {
 			endPin.setConnectedWire(null);
 			log.info("Disconnected {} ConnectablePin (end, {})", endPin.getType(), endPin.getNode());
 		}
-		MainController.MAIN_PANE.getChildren().remove(this);
+		MainController.NODE_PANE.getChildren().remove(this);
 	}
 
 	/**
@@ -256,15 +256,15 @@ public class Wire extends Parent {
 		path.setOnMouseDragged(me -> {
 			if (!me.isPrimaryButtonDown()) return;
 			// clear old wire
-			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof PreviewWire);
+			MainController.NODE_PANE.getChildren().removeIf(n -> n instanceof PreviewWire);
 			end.set(Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE));
 			final PreviewWire wire = new PreviewWire(WireLayoutStrategy.STRAIGHT_FIRST_Y, start, end);
 			wire.setCanConnect(NodeUtils.isPinAtPoint(end).isPresent());
 			// add new wire at mouse pos
-			MainController.MAIN_PANE.getChildren().add(wire);
+			MainController.NODE_PANE.getChildren().add(wire);
 		});
 		path.setOnMouseReleased(me -> {
-			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof PreviewWire);
+			MainController.NODE_PANE.getChildren().removeIf(n -> n instanceof PreviewWire);
 			final ConnectablePin endPin = NodeUtils.isPinAtPoint(end)
 					.orElse(null);
 			final Wire wire = new Wire(WireLayoutStrategy.STRAIGHT_FIRST_Y, start, end, this, endPin);
@@ -274,7 +274,7 @@ public class Wire extends Parent {
 			}
 			log.info("Connected {} Wire to {} Wire", this, wire);
 			// this.wire = wire;
-			MainController.MAIN_PANE.getChildren().add(wire);
+			MainController.NODE_PANE.getChildren().add(wire);
 		});
 		setOnDragDetected(e -> startFullDrag());
 	}

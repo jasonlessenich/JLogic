@@ -61,7 +61,7 @@ public class ConnectablePin extends Parent {
 		setOnMouseDragged(me -> {
 			if (!me.isPrimaryButtonDown()) return;
 			// clear old wire
-			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof PreviewWire);
+			MainController.NODE_PANE.getChildren().removeIf(n -> n instanceof PreviewWire);
 			final Point start = getPinPosition();
 			end.set(Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE));
 			final PreviewWire wire = type == Type.OUTPUT
@@ -69,10 +69,10 @@ public class ConnectablePin extends Parent {
 					: new PreviewWire(WireLayoutStrategy.STRAIGHT, end, start);
 			wire.setCanConnect(NodeUtils.isPinAtPoint(end).isPresent());
 			// add new wire at mouse pos
-			MainController.MAIN_PANE.getChildren().add(wire);
+			MainController.NODE_PANE.getChildren().add(wire);
 		});
 		setOnMouseReleased(me -> {
-			MainController.MAIN_PANE.getChildren().removeIf(n -> n instanceof PreviewWire || n == this.wire);
+			MainController.NODE_PANE.getChildren().removeIf(n -> n instanceof PreviewWire || n == this.wire);
 			final Point start = getPinPosition();
 			final ConnectablePin endPin = NodeUtils.isPinAtPoint(end)
 					.orElse(null);
@@ -83,7 +83,7 @@ public class ConnectablePin extends Parent {
 				wire.connect(this, endPin);
 			}
 			this.wire = wire;
-			MainController.MAIN_PANE.getChildren().add(wire);
+			MainController.NODE_PANE.getChildren().add(wire);
 		});
 		setOnDragDetected(e -> startFullDrag());
 	}
@@ -107,7 +107,7 @@ public class ConnectablePin extends Parent {
 	}
 
 	/**
-	 * Gets the {@link ConnectablePin}s position in the {@link MainController#MAIN_PANE}.
+	 * Gets the {@link ConnectablePin}s position in the {@link MainController#NODE_PANE}.
 	 * This simply gets the parent's position and adds the {@link ConnectablePin}s displacement.
 	 * (Calculated by {@link dev.jasonlessenich.jlogic.objects.pins.layout.PinLayoutStrategy})
 	 *

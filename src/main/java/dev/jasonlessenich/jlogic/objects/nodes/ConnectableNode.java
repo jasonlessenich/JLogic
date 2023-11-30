@@ -112,7 +112,7 @@ public abstract class ConnectableNode extends StackPane {
 								p.getConnectedWire().ifPresent(Wire::disconnect);
 								MainController.PINS.remove(p);
 							});
-					MainController.MAIN_PANE.getChildren().remove(this);
+					MainController.NODE_PANE.getChildren().remove(this);
 				}
 		);
 		contextMenu.getItems().add(delete);

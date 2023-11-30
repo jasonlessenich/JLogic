@@ -1,5 +1,6 @@
 package dev.jasonlessenich.jlogic.controller;
 
+import com.sun.javafx.PlatformUtil;
 import dev.jasonlessenich.jlogic.JLogicApplication;
 import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.nodes.gates.CustomGateNode;
@@ -11,51 +12,57 @@ import dev.jasonlessenich.jlogic.objects.nodes.io.OutputNode;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainController {
 	public static final List<ConnectablePin> PINS = new ArrayList<>();
 
-	public static AnchorPane MAIN_PANE;
+	public static AnchorPane NODE_PANE;
 
 	public static boolean simulationMode = false;
 	@FXML
-	private AnchorPane mainPane;
+	public MenuBar menuBar;
+	@FXML
+	private AnchorPane nodePane;
 	private Point lastContextMenuPoint = new Point();
 
 	@FXML
 	private void initialize() {
-		MAIN_PANE = mainPane;
+		NODE_PANE = nodePane;
 		// draw grid
-		mainPane.setStyle("""
+		nodePane.setStyle("""
 					-fx-background-color: rgba(255,255,255,0.2),
-					linear-gradient(from 0.5px 0.0px to 10.5px  0.0px, repeat, #f1f1f1 5%, transparent 5%),
-					linear-gradient(from 0.0px 0.5px to  0.0px 10.5px, repeat, #f1f1f1 5%, transparent 5%);
+					linear-gradient(from 0.5px 0.0px to 10.5px  0.0px, repeat, #BDBDBD 5%, transparent 5%),
+					linear-gradient(from 0.0px 0.5px to  0.0px 10.5px, repeat, #BDBDBD 5%, transparent 5%);
 				""");
 		final ContextMenu contextMenu = buildPaneContextMenu();
-		mainPane.setOnMouseClicked(mouseEvent -> {
+		nodePane.setOnMouseClicked(mouseEvent -> {
 			contextMenu.hide();
 			if (mouseEvent.getTarget().getClass() != AnchorPane.class) return;
 			if (mouseEvent.getButton() == MouseButton.SECONDARY) {
 				lastContextMenuPoint = Point.of(mouseEvent.getX(), mouseEvent.getY()).stepped(Constants.GRID_STEP_SIZE);
-				contextMenu.show(mainPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+				contextMenu.show(nodePane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
 			}
 		});
 	}
 
 	private void addConnectable(@Nonnull ConnectableNode node) {
-		mainPane.getChildren().add(node);
+		nodePane.getChildren().add(node);
 		node.evaluate();
 	}
 

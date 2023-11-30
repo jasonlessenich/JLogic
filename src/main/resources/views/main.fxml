@@ -1,8 +1,51 @@
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<BorderPane
         xmlns:fx="http://javafx.com/fxml"
         xmlns="http://javafx.com/javafx"
-        style="-fx-padding: 5"
-        fx:id="mainPane"
         fx:controller="dev.jasonlessenich.jlogic.controller.MainController">
-</AnchorPane>
+    <top>
+        <MenuBar fx:id="menuBar" useSystemMenuBar="true">
+            <Menu text="File">
+                <MenuItem text="New"/>
+                <MenuItem text="Open..."/>
+                <MenuItem text="Save"/>
+                <MenuItem text="Save As..."/>
+            </Menu>
+            <Menu text="Edit">
+                <MenuItem text="Undo"/>
+                <MenuItem text="Redo"/>
+            </Menu>
+            <Menu text="View">
+                <MenuItem text="Zoom In"/>
+                <MenuItem text="Zoom Out"/>
+                <MenuItem text="Reset Zoom"/>
+            </Menu>
+            <Menu text="Export">
+                <MenuItem text="Export JGate..."/>
+                <Menu text="Export Image...">
+                    <MenuItem text="PNG"/>
+                    <MenuItem text="JPEG"/>
+                    <MenuItem text="SVG"/>
+                </Menu>
+                <Menu text="Export Truth Table...">
+                    <MenuItem text="CSV"/>
+                    <MenuItem text="TSV"/>
+                    <MenuItem text="JSON"/>
+                </Menu>
+            </Menu>
+            <Menu text="Help">
+                <MenuItem text="About"/>
+            </Menu>
+        </MenuBar>
+    </top>
+    <center>
+        <AnchorPane
+                style="-fx-padding: 5"
+                fx:id="nodePane">
+        </AnchorPane>
+    </center>
+</BorderPane>
