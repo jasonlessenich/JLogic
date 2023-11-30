@@ -3,6 +3,13 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.control.TreeItem?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.SplitPane?>
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
         xmlns="http://javafx.com/javafx"
@@ -43,9 +50,19 @@
         </MenuBar>
     </top>
     <center>
-        <AnchorPane
-                style="-fx-padding: 5"
-                fx:id="nodePane">
-        </AnchorPane>
+        <SplitPane style="-fx-padding: 5" dividerPositions=".2">
+            <SplitPane orientation="VERTICAL">
+                <TreeView showRoot="false">
+                    <TreeItem value="root" fx:id="rootTreeItem"/>
+                </TreeView>
+                <TabPane fx:id="nodeTabPane" tabClosingPolicy="UNAVAILABLE">
+                    <Tab text="Properties"/>
+                    <Tab text="Truth Table"/>
+                </TabPane>
+            </SplitPane>
+            <AnchorPane
+                    fx:id="nodePane">
+            </AnchorPane>
+        </SplitPane>
     </center>
 </BorderPane>

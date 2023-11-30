@@ -1,6 +1,7 @@
 package dev.jasonlessenich.jlogic.controller;
 
 import com.sun.javafx.PlatformUtil;
+import com.sun.source.tree.Tree;
 import dev.jasonlessenich.jlogic.JLogicApplication;
 import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.nodes.gates.CustomGateNode;
@@ -21,6 +22,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 
@@ -30,20 +33,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainController {
+	public static final List<ConnectableNode> NODES = new ArrayList<>();
 	public static final List<ConnectablePin> PINS = new ArrayList<>();
 
 	public static AnchorPane NODE_PANE;
 
 	public static boolean simulationMode = false;
 	@FXML
-	public MenuBar menuBar;
+	public TabPane nodeTabPane;
 	@FXML
 	private AnchorPane nodePane;
+	@FXML
+	public MenuBar menuBar;
+	@FXML
+	public TreeItem<String> rootTreeItem;
 	private Point lastContextMenuPoint = new Point();
 
 	@FXML
 	private void initialize() {
 		NODE_PANE = nodePane;
+		nodeTabPane.getStyleClass().add("floating");
 		// draw grid
 		nodePane.setStyle("""
 					-fx-background-color: rgba(255,255,255,0.2),
@@ -62,8 +71,18 @@ public class MainController {
 	}
 
 	private void addConnectable(@Nonnull ConnectableNode node) {
+		NODES.add(node);
 		nodePane.getChildren().add(node);
 		node.evaluate();
+		updateNodeTreeView();
+	}
+
+	private void updateNodeTreeView() {
+		rootTreeItem.getChildren().clear();
+		for (ConnectableNode n : NODES) {
+			final TreeItem<String> i = new TreeItem<>(n.getClass().getSimpleName());
+			rootTreeItem.getChildren().add(i);
+		}
 	}
 
 	private @Nonnull ContextMenu buildPaneContextMenu() {
