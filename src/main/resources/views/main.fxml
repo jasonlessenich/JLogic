@@ -5,17 +5,16 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.control.TreeItem?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.SplitPane?>
+<?import dev.jasonlessenich.jlogic.custom.pane.PanAndZoomPane?>
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
         xmlns="http://javafx.com/javafx"
         fx:controller="dev.jasonlessenich.jlogic.controller.MainController">
     <top>
-        <MenuBar fx:id="menuBar" useSystemMenuBar="true">
+        <MenuBar fx:id="menuBar">
             <Menu text="File">
                 <MenuItem text="New"/>
                 <MenuItem text="Open..."/>
@@ -60,9 +59,9 @@
                     <Tab text="Truth Table"/>
                 </TabPane>
             </SplitPane>
-            <AnchorPane
-                    fx:id="nodePane">
-            </AnchorPane>
+            <PanAndZoomPane>
+                <AnchorPane prefHeight="200" prefWidth="200" fx:id="nodePane"/>
+            </PanAndZoomPane>
         </SplitPane>
     </center>
 </BorderPane>
