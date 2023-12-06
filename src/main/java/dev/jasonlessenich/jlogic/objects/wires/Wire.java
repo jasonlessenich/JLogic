@@ -250,14 +250,14 @@ public class Wire extends Parent {
 	private void addEventListeners(@Nonnull Path path) {
 		final Point start = new Point();
 		path.setOnMousePressed(me -> {
-			start.setX(me.getSceneX());
-			start.setY(me.getSceneY());
+			start.setX(me.getX());
+			start.setY(me.getY());
 		});
 		path.setOnMouseDragged(me -> {
 			if (!me.isPrimaryButtonDown()) return;
 			// clear old wire
 			MainController.NODE_PANE.getChildren().removeIf(n -> n instanceof PreviewWire);
-			end.set(Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE));
+			end.set(Point.of(me.getX(), me.getY()).stepped(Constants.GRID_STEP_SIZE));
 			final PreviewWire wire = new PreviewWire(WireLayoutStrategy.STRAIGHT_FIRST_Y, start, end);
 			wire.setCanConnect(NodeUtils.isPinAtPoint(end).isPresent());
 			// add new wire at mouse pos
@@ -299,14 +299,8 @@ public class Wire extends Parent {
 		circle.setFill(PIN_FILL);
 		circle.setStroke(Color.BLACK);
 		circle.setStrokeWidth(2);
-
-		final Point dragDelta = new Point();
-		circle.setOnMousePressed(me -> {
-			dragDelta.setX(me.getSceneX());
-			dragDelta.setY(me.getSceneY());
-		});
 		circle.setOnMouseDragged(me -> {
-			final Point newPos = Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE);
+			final Point newPos = Point.of(me.getX(), me.getY()).stepped(Constants.GRID_STEP_SIZE);
 			if (isStart) setStart(newPos);
 			else setEnd(newPos);
 			final Optional<ConnectablePin> pinOptional = NodeUtils.isPinAtPoint(newPos);

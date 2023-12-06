@@ -1,8 +1,8 @@
 package dev.jasonlessenich.jlogic.controller;
 
-import com.sun.javafx.PlatformUtil;
-import com.sun.source.tree.Tree;
 import dev.jasonlessenich.jlogic.JLogicApplication;
+import dev.jasonlessenich.jlogic.custom.pane.PanAndZoomPane;
+import dev.jasonlessenich.jlogic.custom.pane.SceneGestures;
 import dev.jasonlessenich.jlogic.objects.nodes.ConnectableNode;
 import dev.jasonlessenich.jlogic.objects.nodes.gates.CustomGateNode;
 import dev.jasonlessenich.jlogic.objects.nodes.gates.concrete.AndGateNode;
@@ -13,8 +13,6 @@ import dev.jasonlessenich.jlogic.objects.nodes.io.OutputNode;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
@@ -22,13 +20,16 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,10 @@ public class MainController {
 	@FXML
 	public TabPane nodeTabPane;
 	@FXML
+	public PanAndZoomPane mainPanPane;
+	@FXML
+	public StackPane mainStackPane;
+	@FXML
 	private AnchorPane nodePane;
 	@FXML
 	public MenuBar menuBar;
@@ -52,6 +57,13 @@ public class MainController {
 	@FXML
 	private void initialize() {
 		NODE_PANE = nodePane;
+		final SceneGestures sceneGestures = new SceneGestures(mainPanPane);
+		mainPanPane.toBack();
+		// add gesture event filters
+		mainStackPane.addEventFilter(MouseEvent.MOUSE_CLICKED, sceneGestures.getOnMouseClickedEventHandler());
+		mainStackPane.addEventFilter(MouseEvent.MOUSE_PRESSED, sceneGestures.getOnMousePressedEventHandler());
+		mainStackPane.addEventFilter(MouseEvent.MOUSE_DRAGGED, sceneGestures.getOnMouseDraggedEventHandler());
+		mainStackPane.addEventFilter(ScrollEvent.ANY, sceneGestures.getOnScrollEventHandler());
 		nodeTabPane.getStyleClass().add("floating");
 		// draw grid
 		nodePane.setStyle("""

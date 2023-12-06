@@ -63,7 +63,7 @@ public class ConnectablePin extends Parent {
 			// clear old wire
 			MainController.NODE_PANE.getChildren().removeIf(n -> n instanceof PreviewWire);
 			final Point start = getPinPosition();
-			end.set(Point.of(me.getSceneX(), me.getSceneY()).stepped(Constants.GRID_STEP_SIZE));
+			end.set(Point.of(me.getX() + start.getX(), me.getY() + start.getY()).stepped(Constants.GRID_STEP_SIZE));
 			final PreviewWire wire = type == Type.OUTPUT
 					? new PreviewWire(WireLayoutStrategy.STRAIGHT, start, end)
 					: new PreviewWire(WireLayoutStrategy.STRAIGHT, end, start);

@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.SplitPane?>
 <?import dev.jasonlessenich.jlogic.custom.pane.PanAndZoomPane?>
+<?import javafx.scene.layout.StackPane?>
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
         xmlns="http://javafx.com/javafx"
@@ -50,6 +51,7 @@
     </top>
     <center>
         <SplitPane style="-fx-padding: 5" dividerPositions=".2">
+            <!-- Properties Panel -->
             <SplitPane orientation="VERTICAL">
                 <TreeView showRoot="false">
                     <TreeItem value="root" fx:id="rootTreeItem"/>
@@ -59,9 +61,21 @@
                     <Tab text="Truth Table"/>
                 </TabPane>
             </SplitPane>
-            <PanAndZoomPane>
-                <AnchorPane prefHeight="200" prefWidth="200" fx:id="nodePane"/>
-            </PanAndZoomPane>
+            <!-- Main Content Area -->
+            <BorderPane>
+                <top>
+                    <MenuBar>
+                        <Menu text="Gates"></Menu>
+                    </MenuBar>
+                </top>
+                <center>
+                    <StackPane fx:id="mainStackPane" >
+                        <PanAndZoomPane fx:id="mainPanPane">
+                            <AnchorPane prefHeight="900" prefWidth="1600" fx:id="nodePane"/>
+                        </PanAndZoomPane>
+                    </StackPane>
+                </center>
+            </BorderPane>
         </SplitPane>
     </center>
 </BorderPane>
