@@ -31,31 +31,31 @@ public class MainController {
 
 	public static boolean simulationMode = false;
 	@FXML
-	private AnchorPane mainPane;
+	private AnchorPane contentPane;
 	private Point lastContextMenuPoint = new Point();
 
 	@FXML
 	private void initialize() {
-		MAIN_PANE = mainPane;
+		MAIN_PANE = contentPane;
 		// draw grid
-		mainPane.setStyle("""
+		contentPane.setStyle("""
 					-fx-background-color: rgba(255,255,255,0.2),
 					linear-gradient(from 0.5px 0.0px to 10.5px  0.0px, repeat, #f1f1f1 5%, transparent 5%),
 					linear-gradient(from 0.0px 0.5px to  0.0px 10.5px, repeat, #f1f1f1 5%, transparent 5%);
 				""");
 		final ContextMenu contextMenu = buildPaneContextMenu();
-		mainPane.setOnMouseClicked(mouseEvent -> {
+		contentPane.setOnMouseClicked(mouseEvent -> {
 			contextMenu.hide();
 			if (mouseEvent.getTarget().getClass() != AnchorPane.class) return;
 			if (mouseEvent.getButton() == MouseButton.SECONDARY) {
 				lastContextMenuPoint = Point.of(mouseEvent.getX(), mouseEvent.getY()).stepped(Constants.GRID_STEP_SIZE);
-				contextMenu.show(mainPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+				contextMenu.show(contentPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
 			}
 		});
 	}
 
 	private void addConnectable(@Nonnull ConnectableNode node) {
-		mainPane.getChildren().add(node);
+		contentPane.getChildren().add(node);
 		node.evaluate();
 	}
 

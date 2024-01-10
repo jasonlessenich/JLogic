@@ -1,8 +1,32 @@
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<BorderPane
         xmlns:fx="http://javafx.com/fxml"
         xmlns="http://javafx.com/javafx"
-        style="-fx-padding: 5"
-        fx:id="mainPane"
         fx:controller="dev.jasonlessenich.jlogic.controller.MainController">
-</AnchorPane>
+    <top>
+        <MenuBar>
+            <Menu text="Input"/>
+            <Menu text="Output"/>
+            <Menu text="Gates...">
+                <MenuItem text="AND (∧)"/>
+                <MenuItem text="OR (∨)"/>
+                <MenuItem text="NOT (¬)"/>
+                <SeparatorMenuItem/>
+                <MenuItem text="Import... (.jgate)"/>
+                <MenuItem text="Export... (.jgate)"/>
+            </Menu>
+            <Menu text="Wire"/>
+        </MenuBar>
+    </top>
+    <center>
+        <AnchorPane
+                style="-fx-padding: 5"
+                fx:id="contentPane">
+        </AnchorPane>
+    </center>
+</BorderPane>
