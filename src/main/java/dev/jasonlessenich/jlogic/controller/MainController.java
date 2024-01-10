@@ -11,12 +11,15 @@ import dev.jasonlessenich.jlogic.objects.nodes.io.OutputNode;
 import dev.jasonlessenich.jlogic.objects.pins.ConnectablePin;
 import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 
@@ -30,6 +33,9 @@ public class MainController {
 	public static AnchorPane MAIN_PANE;
 
 	public static boolean simulationMode = false;
+	public Menu inputNodeMenu;
+	public Menu outputNodeMenu;
+	public Menu wireMenu;
 	@FXML
 	private AnchorPane contentPane;
 	private Point lastContextMenuPoint = new Point();
@@ -37,6 +43,9 @@ public class MainController {
 	@FXML
 	private void initialize() {
 		MAIN_PANE = contentPane;
+		inputNodeMenu.setGraphic(getIcon("input"));
+		outputNodeMenu.setGraphic(getIcon("output"));
+		wireMenu.setGraphic(getIcon("wire"));
 		// draw grid
 		contentPane.setStyle("""
 					-fx-background-color: rgba(255,255,255,0.2),
@@ -52,6 +61,21 @@ public class MainController {
 				contextMenu.show(contentPane, mouseEvent.getScreenX(), mouseEvent.getScreenY());
 			}
 		});
+	}
+
+	@FXML
+	public void onInputNodeMenu(@Nonnull ActionEvent actionEvent) {
+		System.out.println("lol");
+	}
+
+	@FXML
+	public void onOutputNodeMenu(@Nonnull ActionEvent actionEvent) {
+		System.out.println("lol1");
+	}
+
+	@FXML
+	public void onWireMenu(@Nonnull ActionEvent actionEvent) {
+		System.out.println("lol2");
 	}
 
 	private void addConnectable(@Nonnull ConnectableNode node) {
@@ -88,5 +112,12 @@ public class MainController {
 		final ContextMenu contextMenu = new ContextMenu();
 		contextMenu.getItems().addAll(simulationMode, new SeparatorMenuItem(), addInput, addOutput, new SeparatorMenuItem(), addGate);
 		return contextMenu;
+	}
+
+	private ImageView getIcon(String name) {
+		final ImageView view = new ImageView(new Image("icons/%s.png".formatted(name)));
+		view.setFitWidth(30);
+		view.setFitHeight(30);
+		return view;
 	}
 }

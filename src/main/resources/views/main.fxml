@@ -10,9 +10,10 @@
         fx:controller="dev.jasonlessenich.jlogic.controller.MainController">
     <top>
         <MenuBar>
-            <Menu text="Input"/>
-            <Menu text="Output"/>
-            <Menu text="Gates...">
+            <Menu fx:id="inputNodeMenu" onAction="#onInputNodeMenu"/>
+            <Menu fx:id="outputNodeMenu" onAction="#onOutputNodeMenu"/>
+            <Menu fx:id="wireMenu" onAction="#onWireMenu"/>
+            <Menu text="Gates..." >
                 <MenuItem text="AND (∧)"/>
                 <MenuItem text="OR (∨)"/>
                 <MenuItem text="NOT (¬)"/>
@@ -20,7 +21,6 @@
                 <MenuItem text="Import... (.jgate)"/>
                 <MenuItem text="Export... (.jgate)"/>
             </Menu>
-            <Menu text="Wire"/>
         </MenuBar>
     </top>
     <center>
