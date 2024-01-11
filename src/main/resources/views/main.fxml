@@ -4,24 +4,21 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
 <BorderPane
         xmlns:fx="http://javafx.com/fxml"
         xmlns="http://javafx.com/javafx"
         fx:controller="dev.jasonlessenich.jlogic.controller.MainController">
     <top>
-        <MenuBar>
-            <Menu fx:id="inputNodeMenu" onAction="#onInputNodeMenu"/>
-            <Menu fx:id="outputNodeMenu" onAction="#onOutputNodeMenu"/>
-            <Menu fx:id="wireMenu" onAction="#onWireMenu"/>
-            <Menu text="Gates..." >
-                <MenuItem text="AND (∧)"/>
-                <MenuItem text="OR (∨)"/>
-                <MenuItem text="NOT (¬)"/>
-                <SeparatorMenuItem/>
-                <MenuItem text="Import... (.jgate)"/>
-                <MenuItem text="Export... (.jgate)"/>
-            </Menu>
-        </MenuBar>
+        <HBox>
+            <Button fx:id="inputNodeButton" onAction="#onInputNodeButton"/>
+            <Button fx:id="outputNodeButton" onAction="#onOutputNodeButton"/>
+            <Button fx:id="wireButton" onAction="#onWireButton"/>
+            <Separator/>
+            <Button fx:id="toggleSimulationButton" onAction="#onToggleSimulation"/>
+        </HBox>
     </top>
     <center>
         <AnchorPane

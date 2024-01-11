@@ -13,11 +13,14 @@ import dev.jasonlessenich.jlogic.utils.Constants;
 import dev.jasonlessenich.jlogic.utils.Point;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -29,13 +32,18 @@ import java.util.List;
 
 public class MainController {
 	public static final List<ConnectablePin> PINS = new ArrayList<>();
-
 	public static AnchorPane MAIN_PANE;
+	public static QuickAccessAction SELECTED_ACTION = QuickAccessAction.NONE;
+	public static boolean SIMULATION_MODE = false;
 
-	public static boolean simulationMode = false;
-	public Menu inputNodeMenu;
-	public Menu outputNodeMenu;
-	public Menu wireMenu;
+	@FXML
+	public Button inputNodeButton;
+	@FXML
+	public Button outputNodeButton;
+	@FXML
+	public Button wireButton;
+	@FXML
+	public Button toggleSimulationButton;
 	@FXML
 	private AnchorPane contentPane;
 	private Point lastContextMenuPoint = new Point();
@@ -43,9 +51,7 @@ public class MainController {
 	@FXML
 	private void initialize() {
 		MAIN_PANE = contentPane;
-		inputNodeMenu.setGraphic(getIcon("input"));
-		outputNodeMenu.setGraphic(getIcon("output"));
-		wireMenu.setGraphic(getIcon("wire"));
+		initializeQuickAccessButtons();
 		// draw grid
 		contentPane.setStyle("""
 					-fx-background-color: rgba(255,255,255,0.2),
@@ -63,19 +69,43 @@ public class MainController {
 		});
 	}
 
-	@FXML
-	public void onInputNodeMenu(@Nonnull ActionEvent actionEvent) {
-		System.out.println("lol");
+	// TODO: docs
+	private void initializeQuickAccessButtons() {
+		inputNodeButton.setGraphic(getIcon("input"));
+		installTooltip(inputNodeButton, "Add Input Node");
+		outputNodeButton.setGraphic(getIcon("output"));
+		installTooltip(outputNodeButton, "Add Output Node");
+		wireButton.setGraphic(getIcon("wire"));
+		installTooltip(wireButton, "Add Wire");
+		toggleSimulationButton.setGraphic(getIcon("simulate-start"));
+		installTooltip(toggleSimulationButton, "Toggle Simulation");
 	}
 
 	@FXML
-	public void onOutputNodeMenu(@Nonnull ActionEvent actionEvent) {
-		System.out.println("lol1");
+	public void onInputNodeButton(@Nonnull ActionEvent actionEvent) {
+		setQuickAccessAction(QuickAccessAction.ADD_INPUT);
 	}
 
 	@FXML
-	public void onWireMenu(@Nonnull ActionEvent actionEvent) {
-		System.out.println("lol2");
+	public void onOutputNodeButton(@Nonnull ActionEvent actionEvent) {
+		setQuickAccessAction(QuickAccessAction.ADD_OUTPUT);
+	}
+
+	@FXML
+	public void onWireButton(@Nonnull ActionEvent actionEvent) {
+		setQuickAccessAction(QuickAccessAction.ADD_WIRE);
+	}
+
+	@FXML
+	public void onToggleSimulation(@Nonnull ActionEvent actionEvent) {
+		SELECTED_ACTION = QuickAccessAction.NONE;
+		SIMULATION_MODE = !SIMULATION_MODE;
+		toggleSimulationButton.setGraphic(getIcon(SIMULATION_MODE ? "simulate-stop" : "simulate-start"));
+	}
+
+	private void setQuickAccessAction(@Nonnull QuickAccessAction action) {
+		SELECTED_ACTION = action;
+		SIMULATION_MODE = false;
 	}
 
 	private void addConnectable(@Nonnull ConnectableNode node) {
@@ -85,9 +115,9 @@ public class MainController {
 
 	private @Nonnull ContextMenu buildPaneContextMenu() {
 		final CheckMenuItem simulationMode = new CheckMenuItem("Simulation Mode");
-		simulationMode.setSelected(MainController.simulationMode);
+		simulationMode.setSelected(MainController.SIMULATION_MODE);
 		simulationMode.setOnAction(actionEvent -> {
-			MainController.simulationMode = simulationMode.isSelected();
+			MainController.SIMULATION_MODE = simulationMode.isSelected();
 		});
 		final MenuItem addInput = new MenuItem("Add Input");
 		addInput.setOnAction(actionEvent -> addConnectable(new InputNode(lastContextMenuPoint)));
@@ -114,10 +144,22 @@ public class MainController {
 		return contextMenu;
 	}
 
-	private ImageView getIcon(String name) {
+	@Nonnull
+	private ImageView getIcon(@Nonnull String name) {
 		final ImageView view = new ImageView(new Image("icons/%s.png".formatted(name)));
-		view.setFitWidth(30);
-		view.setFitHeight(30);
+		view.setFitWidth(25);
+		view.setFitHeight(25);
 		return view;
+	}
+
+	private void installTooltip(@Nonnull Node node, @Nonnull String text) {
+		Tooltip.install(node, new Tooltip(text));
+	}
+
+	public enum QuickAccessAction {
+		NONE,
+		ADD_INPUT,
+		ADD_OUTPUT,
+		ADD_WIRE
 	}
 }

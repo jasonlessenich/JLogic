@@ -21,7 +21,7 @@ public class InputNode extends IONode {
 		final EventHandler<? super MouseEvent> onMousePressed = getOnMousePressed();
 		setOnMousePressed(me -> {
 			onMousePressed.handle(me);
-			if (MainController.simulationMode && me.isPrimaryButtonDown())
+			if (MainController.SIMULATION_MODE && me.isPrimaryButtonDown())
 				toggleActivated();
 		});
 	}
